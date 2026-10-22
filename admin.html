@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوارو | لوحة تحكم المدير المستقلة (Admin)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
+
+        :root {
+            --navy-dark: #0a1628;
+            --navy-main: #13284c;
+            --navy-light: #1e3a8a;
+            --gold: #c59b27;
+            --gold-light: #e5c158;
+            --bg-gray: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --danger: #b91c1c;
+            --success: #047857;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg-gray); color: var(--text-dark); line-height: 1.6; }
+
+        .admin-topbar {
+            background: var(--navy-dark);
+            color: #fff;
+            padding: 16px 24px;
+            border-bottom: 4px solid var(--gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .container { max-width: 920px; margin: 28px auto; padding: 0 18px; }
+
+        .panel-card {
+            background: var(--card-bg);
+            border: 1px solid #cbd5e1;
+            border-radius: 14px;
+            padding: 26px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--navy-main);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.92rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn:hover { background: var(--navy-light); }
+        .btn-gold { background: var(--gold); color: var(--navy-dark); }
+        .btn-gold:hover { background: var(--gold-light); }
+        .btn-success { background: var(--success); color: #fff; }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-outline { background: transparent; color: var(--navy-main); border: 2px solid var(--navy-main); }
+
+        .input-field {
+            width: 100%;
+            padding: 11px 14px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.96rem;
+            margin-bottom: 14px;
+        }
+        .input-field:focus { outline: none; border-color: var(--navy-main); }
+
+        .label-title { display: block; font-weight: 700; margin-bottom: 6px; color: var(--navy-dark); font-size: 0.92rem; }
+
+        .admin-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 22px;
+            border-bottom: 2px solid #cbd5e1;
+            padding-bottom: 12px;
+        }
+
+        .admin-tab-btn {
+            background: #e2e8f0;
+            color: var(--navy-dark);
+            border: none;
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .admin-tab-btn.active { background: var(--navy-main); color: #fff; }
+
+        .admin-item-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 16px;
+        }
+
+        .alert-msg { padding: 12px 16px; border-radius: 8px; margin: 12px 0; font-weight: 700; text-align: center; }
+        .alert-error { background: #fef2f2; color: var(--danger); border: 1px solid #fecaca; }
+        .alert-success { background: #ecfdf5; color: var(--success); border: 1px solid #a7f3d0; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-topbar">
+        <div>
+            <h2>🛠️ لوحة تحكم بوارو (صفحة الإدارة المستقلة - admin.html)</h2>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <a href="index.html" target="_blank" class="btn btn-gold">👁️ فتح صفحة اللاعبين (index.html)</a>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- شاشة قفل المدير -->
+        <div id="view-login" class="panel-card" style="max-width: 440px; margin: 40px auto; text-align: center;">
+            <span style="font-size: 2.8rem;">🛡️</span>
+            <h3 style="margin: 10px 0;">تسجيل دخول المدير</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">أدخل رمز الحماية الخاص بالمدير لفتح لوحة التحكم:</p>
+            <input type="password" id="admin-pin-input" class="input-field" placeholder="رمز المدير (الافتراضي: 2026)" style="text-align: center;" onkeydown="if(event.key==='Enter') verifyAdminPin()">
+            <div id="login-error" class="alert-msg alert-error hidden">❌ رمز المدير غير صحيح!</div>
+            <button class="btn btn-gold" style="width: 100%;" onclick="verifyAdminPin()">دخول للوحة التحكم</button>
+        </div>
+
+        <!-- لوحة التحكم الكاملة -->
+        <div id="view-dashboard" class="panel-card hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; background: #e2e8f0; padding: 16px; border-radius: 10px;">
+                <div style="flex: 1; min-width: 240px;">
+                    <label class="label-title">📂 اختر القضية التي تريد تعديلها:</label>
+                    <select id="admin-case-selector" class="input-field" style="margin-bottom: 0; background: #fff;" onchange="loadSelectedCase()"></select>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-success" onclick="createNewCase()">+ إضافة قضية جديدة</button>
+                    <button class="btn btn-danger" onclick="deleteCurrentCase()">🗑️ حذف القضية</button>
+                </div>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="admin-tab-btn active" onclick="switchTab('tab-basic', this)">1. بيانات القضية وكلمة المرور</button>
+                <button class="admin-tab-btn" onclick="switchTab('tab-puzzles', this)">2. الألغاز وحلولها</button>
+                <button class="admin-tab-btn" onclick="switchTab('tab-questions', this)">3. أسئلة استمارة الاتهام</button>
+                <button class="admin-tab-btn" onclick="switchTab('tab-verdict', this)">4. تقرير الحل وحكم المحكمة</button>
+                <button class="admin-tab-btn" onclick="switchTab('tab-publish', this)">5. الباركود وحفظ التعديلات (cases.json)</button>
+            </div>
+
+            <div id="status-notice" class="alert-msg alert-success hidden"></div>
+
+            <!-- التبويب 1: بيانات القضية -->
+            <div id="tab-basic" class="tab-pane">
+                <div class="admin-item-box">
+                    <label class="label-title">اسم القضية:</label>
+                    <input type="text" id="adm-title" class="input-field">
+
+                    <label class="label-title">رمز / رقم الملف:</label>
+                    <input type="text" id="adm-code" class="input-field" placeholder="مثال: القضية رقم #01">
+
+                    <label class="label-title">وصف مختصر للقضية:</label>
+                    <textarea id="adm-desc" class="input-field" rows="3"></textarea>
+
+                    <label class="label-title">🔑 كلمة المرور لفتح قسم (حل ألغاز القضية):</label>
+                    <input type="text" id="adm-pass" class="input-field" style="font-weight: bold; color: var(--navy-light);">
+                </div>
+            </div>
+
+            <!-- التبويب 2: الألغاز وحلولها -->
+            <div id="tab-puzzles" class="tab-pane hidden">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <h4>قائمة مربعات الألغاز في هذه القضية:</h4>
+                    <button class="btn btn-success" onclick="addPuzzle()">+ إضافة لغز جديد</button>
+                </div>
+                <div id="adm-puzzles-container"></div>
+            </div>
+
+            <!-- التبويب 3: أسئلة استمارة الاتهام -->
+            <div id="tab-questions" class="tab-pane hidden">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <h4>أسئلة استمارة الاتهام النهائية:</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">اختر لكل سؤال إما (اختيار من متعدد) أو (إجابة كتابية يكتبها اللاعب)</p>
+                    </div>
+                    <button class="btn btn-success" onclick="addQuestion()">+ إضافة سؤال جديد</button>
+                </div>
+                <div id="adm-questions-container"></div>
+            </div>
+
+            <!-- التبويب 4: أوراق الحل وحكم المحكمة -->
+            <div id="tab-verdict" class="tab-pane hidden">
+                <div class="admin-item-box">
+                    <label class="label-title">🕵️‍♂️ نص تقرير المحقق "بوارو" الكامل:</label>
+                    <textarea id="adm-report" class="input-field" rows="8"></textarea>
+
+                    <label class="label-title">⚖️ نص حكم المحكمة النهائي:</label>
+                    <textarea id="adm-verdict" class="input-field" rows="8"></textarea>
+                </div>
+            </div>
+
+            <!-- التبويب 5: حفظ cases.json والباركود -->
+            <div id="tab-publish" class="tab-pane hidden">
+                <!-- خيار 1: تنزيل ملف cases.json أو المعاينة الفورية -->
+                <div class="admin-item-box" style="border-right: 5px solid var(--success);">
+                    <h4>📥 الطريقة الأولى: حفظ وتحميل ملف البيانات (cases.json)</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin: 8px 0 14px;">
+                        اضغط على الزر أدناه لحفظ التعديلات وتنزيل ملف <b>cases.json</b> المحدث جاهزاً لرفعه إلى مستودعك في GitHub:
+                    </p>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-success" onclick="downloadCasesJson()">⬇️ حفظ وتنزيل ملف cases.json المحدث</button>
+                        <button class="btn btn-gold" onclick="syncFormToMemory(true)">💾 حفظ للمعاينة الفورية على المتصفح</button>
+                    </div>
+                </div>
+
+                <!-- خيار 2: التحديث التلقائي المباشر على GitHub API بضغطة زر -->
+                <div class="admin-item-box" style="border-right: 5px solid var(--navy-main);">
+                    <h4>🚀 الطريقة الثانية (اختياري): النشر التلقائي المباشر على GitHub بضغطة زر</h4>
+                    <p style="font-size: 0.88rem; color: var(--text-muted); margin: 6px 0 12px;">
+                        إذا أدخلت اسم مستودعك على GitHub ومفتاح الوصول (Token)، ستقوم اللوحة بتحديث ملف <b>cases.json</b> على موقعك مباشرة دون الحاجة لرفعه يدوياً:
+                    </p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div>
+                            <label class="label-title">اسم المستخدم والمستودع (Owner/Repo):</label>
+                            <input type="text" id="gh-repo" class="input-field" dir="ltr" placeholder="mgd108099/poirot">
+                        </div>
+                        <div>
+                            <label class="label-title">الفرع (Branch):</label>
+                            <input type="text" id="gh-branch" class="input-field" dir="ltr" value="main">
+                        </div>
+                    </div>
+                    <label class="label-title">مفتاح GitHub Personal Access Token:</label>
+                    <input type="password" id="gh-token" class="input-field" dir="ltr" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+                    <button class="btn" onclick="publishDirectlyToGitHub()">☁️ نشر التعديلات مباشرة إلى GitHub</button>
+                </div>
+
+                <!-- توليد الباركود QR -->
+                <div class="admin-item-box">
+                    <h4>📱 توليد الباركود (QR Code) لصفحة اللاعبين:</h4>
+                    <label class="label-title">رابط صفحة اللاعبين (index.html):</label>
+                    <input type="text" id="qr-link-input" class="input-field" dir="ltr">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-gold" onclick="generateQR()">توليد الباركود</button>
+                        <button class="btn btn-outline" onclick="downloadQRImage()">تحميل صورة الباركود للطباعة (PNG)</button>
+                    </div>
+                    <div id="qr-container" style="margin-top: 18px; display: flex; justify-content: center; background: #fff; padding: 15px; border-radius: 10px;"></div>
+                </div>
+            </div>
+
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #cbd5e1;">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <button class="btn btn-gold" style="flex: 1; padding: 14px; font-size: 1rem;" onclick="syncFormToMemory(true)">💾 حفظ التعديلات</button>
+                <button class="btn btn-success" style="padding: 14px; font-size: 1rem;" onclick="downloadCasesJson()">⬇️ تنزيل ملف cases.json النهائي</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const STORAGE_KEY = "poirot_detective_cases_v2";
+        const ADMIN_PIN = "2026";
+        let casesData = [];
+        let selectedIdx = 0;
+
+        function verifyAdminPin() {
+            const val = document.getElementById("admin-pin-input").value.trim();
+            if (val === ADMIN_PIN) {
+                document.getElementById("view-login").classList.add("hidden");
+                document.getElementById("view-dashboard").classList.remove("hidden");
+                initAdminData();
+            } else {
+                document.getElementById("login-error").classList.remove("hidden");
+            }
+        }
+
+        async function initAdminData() {
+            try {
+                const res = await fetch('./cases.json?t=' + Date.now());
+                if (res.ok) {
+                    casesData = await res.json();
+                }
+            } catch (e) {
+                console.warn("لم يتم العثور على cases.json عبر السيرفر، جاري التحقق من الذاكرة المحلية.");
+            }
+
+            if (!casesData || casesData.length === 0) {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) casesData = JSON.parse(saved);
+            }
+
+            // استرجاع إعدادات GitHub إن وجدت
+            document.getElementById("gh-repo").value = localStorage.getItem("poirot_gh_repo") || "";
+            document.getElementById("gh-token").value = localStorage.getItem("poirot_gh_token") || "";
+
+            // تجهيز رابط اللاعبين للباركود
+            const playerUrl = window.location.href.replace(/admin\.html.*$/i, "index.html");
+            document.getElementById("qr-link-input").value = playerUrl;
+
+            populateCaseSelector();
+            loadSelectedCase();
+            generateQR();
+        }
+
+        function populateCaseSelector() {
+            const sel = document.getElementById("admin-case-selector");
+            sel.innerHTML = "";
+            casesData.forEach((c, idx) => {
+                const opt = document.createElement("option");
+                opt.value = idx;
+                opt.textContent = `${c.code ? c.code + " - " : ""}${c.title}`;
+                sel.appendChild(opt);
+            });
+            sel.value = selectedIdx;
+        }
+
+        function loadSelectedCase() {
+            selectedIdx = parseInt(document.getElementById("admin-case-selector").value, 10) || 0;
+            const c = casesData[selectedIdx];
+            if (!c) return;
+
+            document.getElementById("adm-title").value = c.title || "";
+            document.getElementById("adm-code").value = c.code || "";
+            document.getElementById("adm-desc").value = c.desc || "";
+            document.getElementById("adm-pass").value = c.puzzlePassword || "112020";
+            document.getElementById("adm-report").value = c.poirotReport || "";
+            document.getElementById("adm-verdict").value = c.courtVerdict || "";
+
+            renderPuzzles();
+            renderQuestions();
+        }
+
+        function switchTab(tabId, btn) {
+            syncFormToMemory(false);
+            document.querySelectorAll(".tab-pane").forEach(el => el.classList.add("hidden"));
+            document.getElementById(tabId).classList.remove("hidden");
+            document.querySelectorAll(".admin-tab-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+        }
+
+        function renderPuzzles() {
+            const container = document.getElementById("adm-puzzles-container");
+            container.innerHTML = "";
+            const puzzles = casesData[selectedIdx].puzzles || [];
+
+            puzzles.forEach((p, pIdx) => {
+                const div = document.createElement("div");
+                div.className = "admin-item-box";
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                        <strong>🧩 اللغز رقم #${pIdx + 1}</strong>
+                        <button class="btn btn-danger" style="padding:4px 10px; font-size:0.8rem;" onclick="removePuzzle(${pIdx})">حذف اللغز</button>
+                    </div>
+                    <label class="label-title">عنوان اللغز:</label>
+                    <input type="text" class="input-field" value="${escapeHtml(p.title)}" oninput="casesData[selectedIdx].puzzles[${pIdx}].title = this.value">
+                    <label class="label-title">تلميح مختصر يظهر على المربع:</label>
+                    <input type="text" class="input-field" value="${escapeHtml(p.hint || '')}" oninput="casesData[selectedIdx].puzzles[${pIdx}].hint = this.value">
+                    <label class="label-title">نص الحل الكامل:</label>
+                    <textarea class="input-field" rows="4" oninput="casesData[selectedIdx].puzzles[${pIdx}].solution = this.value">${escapeHtml(p.solution)}</textarea>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addPuzzle() {
+            casesData[selectedIdx].puzzles.push({ title: "لغز جديد", hint: "اضغط لعرض الحل", solution: "تفاصيل الحل هنا..." });
+            renderPuzzles();
+        }
+
+        function removePuzzle(pIdx) {
+            casesData[selectedIdx].puzzles.splice(pIdx, 1);
+            renderPuzzles();
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById("adm-questions-container");
+            container.innerHTML = "";
+            const questions = casesData[selectedIdx].questions || [];
+
+            questions.forEach((q, qIdx) => {
+                const isText = q.type === "text";
+                const div = document.createElement("div");
+                div.className = "admin-item-box";
+
+                let detailsHtml = "";
+                if (isText) {
+                    detailsHtml = `
+                        <div style="background:#fffbeb; border:1px solid #fde68a; padding:14px; border-radius:8px;">
+                            <label class="label-title">آلية التحقق من إجابة اللاعب الكتابية:</label>
+                            <select class="input-field" onchange="casesData[selectedIdx].questions[${qIdx}].validationMode = this.value; renderQuestions();">
+                                <option value="keywords" ${q.validationMode !== 'any' ? 'selected' : ''}>مطابقة كلمات مفتاحية (يقبل الجواب إذا تضمن إحدى الكلمات الصحيحة)</option>
+                                <option value="any" ${q.validationMode === 'any' ? 'selected' : ''}>سؤال تحليلي مفتوح (يقبل أي إجابة يكتبها اللاعب)</option>
+                            </select>
+
+                            <div class="${q.validationMode === 'any' ? 'hidden' : ''}">
+                                <label class="label-title">الكلمات المفتاحية المقبولة (افصل بينها بفاصلة , ):</label>
+                                <input type="text" class="input-field" value="${escapeHtml(q.acceptedAnswers || '')}" placeholder="مثال: رند, الشهبندر, ع-74" oninput="casesData[selectedIdx].questions[${qIdx}].acceptedAnswers = this.value">
+                            </div>
+
+                            <label class="label-title">نص توضيحي داخل الحقل (Placeholder):</label>
+                            <input type="text" class="input-field" style="margin-bottom:0;" value="${escapeHtml(q.placeholder || '')}" oninput="casesData[selectedIdx].questions[${qIdx}].placeholder = this.value">
+                        </div>
+                    `;
+                } else {
+                    const opts = (q.options || []).map((opt, oIdx) => `
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                            <input type="radio" name="correct-q-${qIdx}" ${parseInt(q.correctIndex, 10) === oIdx ? 'checked' : ''} onchange="casesData[selectedIdx].questions[${qIdx}].correctIndex = ${oIdx}">
+                            <input type="text" class="input-field" style="margin-bottom:0; flex:1;" value="${escapeHtml(opt)}" oninput="casesData[selectedIdx].questions[${qIdx}].options[${oIdx}] = this.value">
+                            <button class="btn btn-danger" style="padding:5px 10px;" onclick="removeOption(${qIdx}, ${oIdx})">✕</button>
+                        </div>
+                    `).join("");
+
+                    detailsHtml = `
+                        <div style="background:#e2e8f0; padding:14px; border-radius:8px;">
+                            <label class="label-title">الخيارات (حدد الدائرة بجانب الجواب الصحيح):</label>
+                            ${opts}
+                            <button class="btn btn-outline" style="padding:6px 12px; font-size:0.82rem;" onclick="addOption(${qIdx})">+ إضافة خيار</button>
+                        </div>
+                    `;
+                }
+
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                        <strong>❓ السؤال رقم #${qIdx + 1}</strong>
+                        <button class="btn btn-danger" style="padding:4px 10px; font-size:0.8rem;" onclick="removeQuestion(${qIdx})">حذف السؤال</button>
+                    </div>
+                    <label class="label-title">نوع السؤال:</label>
+                    <select class="input-field" onchange="changeQType(${qIdx}, this.value)">
+                        <option value="mcq" ${!isText ? 'selected' : ''}>🔘 اختيار من متعدد</option>
+                        <option value="text" ${isText ? 'selected' : ''}>✍️ إجابة كتابية يكتبها اللاعب</option>
+                    </select>
+                    <label class="label-title">نص السؤال:</label>
+                    <input type="text" class="input-field" value="${escapeHtml(q.question)}" oninput="casesData[selectedIdx].questions[${qIdx}].question = this.value">
+                    ${detailsHtml}
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function changeQType(qIdx, type) {
+            const q = casesData[selectedIdx].questions[qIdx];
+            q.type = type;
+            if (type === "mcq" && (!q.options || q.options.length < 2)) {
+                q.options = ["الخيار الأول", "الخيار الثاني"];
+                q.correctIndex = 0;
+            }
+            renderQuestions();
+        }
+
+        function addOption(qIdx) {
+            casesData[selectedIdx].questions[qIdx].options.push("خيار جديد");
+            renderQuestions();
+        }
+
+        function removeOption(qIdx, oIdx) {
+            const q = casesData[selectedIdx].questions[qIdx];
+            if (q.options.length <= 2) return alert("يجب إبقاء خيارين على الأقل.");
+            q.options.splice(oIdx, 1);
+            if (q.correctIndex >= q.options.length) q.correctIndex = 0;
+            renderQuestions();
+        }
+
+        function addQuestion() {
+            casesData[selectedIdx].questions.push({
+                type: "mcq",
+                question: "سؤال جديد في استمارة الاتهام؟",
+                options: ["الخيار الأول", "الخيار الثاني", "الخيار الثالث"],
+                correctIndex: 0,
+                validationMode: "keywords",
+                acceptedAnswers: "",
+                placeholder: "اكتب إجابتك هنا..."
+            });
+            renderQuestions();
+        }
+
+        function removeQuestion(qIdx) {
+            casesData[selectedIdx].questions.splice(qIdx, 1);
+            renderQuestions();
+        }
+
+        function syncFormToMemory(showMsg) {
+            const c = casesData[selectedIdx];
+            if (!c) return;
+            c.title = document.getElementById("adm-title").value.trim();
+            c.code = document.getElementById("adm-code").value.trim();
+            c.desc = document.getElementById("adm-desc").value.trim();
+            c.puzzlePassword = document.getElementById("adm-pass").value.trim() || "112020";
+            c.poirotReport = document.getElementById("adm-report").value;
+            c.courtVerdict = document.getElementById("adm-verdict").value;
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(casesData));
+            populateCaseSelector();
+
+            if (showMsg) {
+                showStatus("✅ تم حفظ التعديلات بنجاح!");
+            }
+        }
+
+        function downloadCasesJson() {
+            syncFormToMemory(false);
+            const dataStr = JSON.stringify(casesData, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "cases.json";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showStatus("⬇️ تم تنزيل ملف cases.json بنجاح! ارفعه إلى مجلد موقعك لتحديث بيانات اللاعبين.");
+        }
+
+        async function publishDirectlyToGitHub() {
+            syncFormToMemory(false);
+            const repo = document.getElementById("gh-repo").value.trim();
+            const branch = document.getElementById("gh-branch").value.trim() || "main";
+            const token = document.getElementById("gh-token").value.trim();
+
+            if (!repo || !token) {
+                return alert("يرجى إدخال اسم المستودع (Owner/Repo) ومفتاح GitHub Token أولاً.");
+            }
+
+            localStorage.setItem("poirot_gh_repo", repo);
+            localStorage.setItem("poirot_gh_token", token);
+
+            try {
+                showStatus("⏳ جاري الاتصال بـ GitHub وتحديث ملف cases.json...");
+                const apiUrl = `https://api.github.com/repos/${repo}/contents/cases.json`;
+
+                let sha = null;
+                const getRes = await fetch(apiUrl + `?ref=${branch}`, {
+                    headers: { "Authorization": `token ${token}` }
+                });
+                if (getRes.ok) {
+                    const fileInfo = await getRes.json();
+                    sha = fileInfo.sha;
+                }
+
+                const contentBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(casesData, null, 2))));
+                const putRes = await fetch(apiUrl, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `token ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        message: "Update cases.json from Poirot Admin Dashboard",
+                        content: contentBase64,
+                        branch: branch,
+                        ...(sha ? { sha } : {})
+                    })
+                });
+
+                if (putRes.ok) {
+                    showStatus("🎉 تم تحديث ملف cases.json مباشرة على GitHub بنجاح!");
+                } else {
+                    alert("تعذر التحديث المباشر، تأكد من صلاحيات الـ Token واسم المستودع.");
+                }
+            } catch (err) {
+                alert("حدث خطأ أثناء الاتصال بـ GitHub: " + err.message);
+            }
+        }
+
+        function createNewCase() {
+            syncFormToMemory(false);
+            casesData.push({
+                id: "case_" + Date.now(),
+                code: `القضية رقم #0${casesData.length + 1}`,
+                title: "قضية جنائية جديدة",
+                desc: "وصف مختصر للقضية الجديدة...",
+                puzzlePassword: "112020",
+                puzzles: [{ title: "اللغز الأول", hint: "اضغط لعرض الحل", solution: "نص الحل..." }],
+                questions: [{ type: "mcq", question: "من هو الجاني الحقيقي؟", options: ["المشتبه الأول", "المشتبه الثاني"], correctIndex: 0, validationMode: "keywords", acceptedAnswers: "", placeholder: "" }],
+                poirotReport: "تقرير المحقق بوارو...",
+                courtVerdict: "حكم المحكمة النهائي..."
+            });
+            selectedIdx = casesData.length - 1;
+            populateCaseSelector();
+            loadSelectedCase();
+        }
+
+        function deleteCurrentCase() {
+            if (casesData.length <= 1) return alert("يجب إبقاء قضية واحدة على الأقل.");
+            if (confirm("هل أنت متأكد من حذف هذه القضية؟")) {
+                casesData.splice(selectedIdx, 1);
+                selectedIdx = 0;
+                populateCaseSelector();
+                loadSelectedCase();
+                syncFormToMemory(true);
+            }
+        }
+
+        function generateQR() {
+            const url = document.getElementById("qr-link-input").value.trim();
+            const box = document.getElementById("qr-container");
+            box.innerHTML = "";
+            new QRCode(box, {
+                text: url,
+                width: 200,
+                height: 200,
+                colorDark: "#0a1628",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        function downloadQRImage() {
+            const img = document.querySelector("#qr-container img") || document.querySelector("#qr-container canvas");
+            if (!img) return alert("يرجى توليد الباركود أولاً.");
+            const src = img.src || img.toDataURL("image/png");
+            const a = document.createElement("a");
+            a.href = src;
+            a.download = "poirot-qrcode.png";
+            a.click();
+        }
+
+        function showStatus(msg) {
+            const el = document.getElementById("status-notice");
+            el.textContent = msg;
+            el.classList.remove("hidden");
+            setTimeout(() => el.classList.add("hidden"), 5000);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return "";
+            return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+    </script>
+</body>
+</html>
