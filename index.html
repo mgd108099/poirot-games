@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوارو | Poirot - بوابة التحقيقات الجنائية</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Amiri:wght@700&display=swap');
+
+        :root {
+            --navy-dark: #0a1628;
+            --navy-main: #13284c;
+            --navy-light: #1e3a8a;
+            --gold: #c59b27;
+            --gold-light: #e5c158;
+            --bg-cream: #f4f1ea;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --danger: #b91c1c;
+            --success: #047857;
+            --border-color: #dcd6c8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            line-height: 1.7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: linear-gradient(180deg, var(--navy-dark) 0%, var(--navy-main) 100%);
+            color: #fff;
+            padding: 28px 20px 24px;
+            text-align: center;
+            border-bottom: 4px solid var(--gold);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-wrapper {
+            width: 105px;
+            height: 105px;
+            margin: 0 auto 12px;
+            background: #ffffff;
+            border-radius: 50%;
+            padding: 6px;
+            border: 3px solid var(--gold);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .logo-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        header h1 {
+            font-family: 'Amiri', serif;
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        header h1 span { color: var(--gold-light); }
+        header p { color: #cbd5e1; font-size: 0.95rem; font-weight: 600; }
+
+        .container {
+            max-width: 850px;
+            width: 100%;
+            margin: 30px auto;
+            padding: 0 18px;
+            flex: 1;
+        }
+
+        .section-header { text-align: center; margin-bottom: 25px; }
+        .section-header h2 {
+            color: var(--navy-main);
+            font-size: 1.55rem;
+            border-bottom: 2px solid var(--gold);
+            display: inline-block;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+        .section-header p { color: var(--text-muted); font-size: 0.95rem; }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .card-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-right: 6px solid var(--navy-main);
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .card-box:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(19, 40, 76, 0.12);
+            border-right-color: var(--gold);
+        }
+
+        .card-badge {
+            display: inline-block;
+            background: var(--navy-main);
+            color: var(--gold-light);
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+
+        .card-box h3 { color: var(--navy-dark); font-size: 1.25rem; margin-bottom: 8px; }
+        .card-box p { color: var(--text-muted); font-size: 0.92rem; }
+
+        .dual-boxes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            margin-top: 25px;
+        }
+
+        @media (max-width: 640px) { .dual-boxes { grid-template-columns: 1fr; } }
+
+        .big-option-box {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            padding: 32px 22px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .big-option-box:hover {
+            border-color: var(--navy-main);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(19, 40, 76, 0.12);
+        }
+
+        .big-option-box.gold-border:hover { border-color: var(--gold); }
+        .big-option-icon { font-size: 3rem; margin-bottom: 14px; display: block; }
+        .big-option-box h3 { color: var(--navy-dark); font-size: 1.35rem; margin-bottom: 8px; }
+        .big-option-box p { color: var(--text-muted); font-size: 0.9rem; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--navy-main);
+            color: #fff;
+            border: none;
+            padding: 11px 22px;
+            border-radius: 8px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: var(--navy-light); }
+        .btn-gold { background: var(--gold); color: var(--navy-dark); }
+        .btn-gold:hover { background: var(--gold-light); }
+        .btn-back { margin-bottom: 20px; background: #475569; padding: 8px 16px; font-size: 0.88rem; }
+
+        .panel-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .pass-box { max-width: 440px; margin: 20px auto; text-align: center; }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            margin-bottom: 14px;
+        }
+        .input-field:focus { outline: none; border-color: var(--navy-main); }
+
+        .question-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-right: 4px solid var(--navy-main);
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 18px;
+        }
+        .question-card h4 { color: var(--navy-dark); margin-bottom: 12px; font-size: 1.05rem; }
+
+        .mcq-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: #fff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .mcq-option:hover { border-color: var(--navy-main); background: #f1f5f9; }
+        .mcq-option input[type="radio"] { accent-color: var(--navy-main); width: 18px; height: 18px; }
+
+        .official-doc {
+            background: #fffdf9;
+            border: 2px solid var(--navy-dark);
+            border-radius: 8px;
+            padding: 28px;
+            margin-top: 25px;
+            box-shadow: inset 0 0 0 4px #fffdf9, inset 0 0 0 6px var(--gold);
+        }
+
+        .official-doc-header {
+            text-align: center;
+            border-bottom: 2px dashed var(--navy-main);
+            padding-bottom: 14px;
+            margin-bottom: 18px;
+        }
+        .official-doc-header h3 { font-family: 'Amiri', serif; font-size: 1.6rem; color: var(--navy-dark); }
+
+        .stamp-badge {
+            display: inline-block;
+            border: 3px double var(--danger);
+            color: var(--danger);
+            padding: 4px 16px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            transform: rotate(-4deg);
+            margin-top: 8px;
+        }
+
+        .verdict-content { white-space: pre-line; line-height: 1.9; font-size: 1.02rem; color: #1e293b; }
+        .hidden { display: none !important; }
+
+        .alert-msg { padding: 12px 16px; border-radius: 8px; margin: 12px 0; font-weight: 700; text-align: center; }
+        .alert-error { background: #fef2f2; color: var(--danger); border: 1px solid #fecaca; }
+        .alert-success { background: #ecfdf5; color: var(--success); border: 1px solid #a7f3d0; }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-wrapper">
+            <!-- سيتم جلب اللوغو المخصص المسمى logo.png مباشرة -->
+            <img src="logo.png" alt="Poirot Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><path d=%22M40 95 C40 42, 160 42, 160 95 Z%22 fill=%22%230d2b5c%22/></svg>'">
+        </div>
+        <h1>بوارو | <span>Poirot</span></h1>
+        <p>بوابة التحقيقات الجنائية والألغاز التفاعلية</p>
+    </header>
+
+    <div class="container">
+
+        <!-- 1. قائمة القضايا -->
+        <div id="view-player-home">
+            <div class="section-header">
+                <h2>📁 ملفات القضايا الجنائية</h2>
+                <p>اختر القضية التي تعمل عليها للوصول إلى بوابة الألغاز واستمارة الاتهام النهائية</p>
+            </div>
+            <div id="cases-list-grid" class="grid-cards"></div>
+        </div>
+
+        <!-- 2. المربعان داخل القضية -->
+        <div id="view-case-hub" class="hidden">
+            <button class="btn btn-back" onclick="showPlayerHome()">← العودة لقائمة القضايا</button>
+            <div class="panel-card">
+                <span class="card-badge" id="hub-case-code">ملف قضية</span>
+                <h2 id="hub-case-title" style="color: var(--navy-dark); margin-bottom: 8px;"></h2>
+                <p id="hub-case-desc" style="color: var(--text-muted);"></p>
+
+                <div class="dual-boxes">
+                    <div class="big-option-box" onclick="openPuzzlePasswordGate()">
+                        <span class="big-option-icon">🔐</span>
+                        <h3>حل ألغاز القضية</h3>
+                        <p>يتطلب إدخال كلمة المرور الخاصة بالملف للاطلاع على التفسير التقني وحلول الألغاز</p>
+                    </div>
+
+                    <div class="big-option-box gold-border" onclick="openAccusationForm()">
+                        <span class="big-option-icon">⚖️</span>
+                        <h3>استمارة الاتهام النهائية</h3>
+                        <p>أجب عن أسئلة التحقيق الحاسمة للتحقق من استنتاجك وفتح أوراق الحل وحكم المحكمة</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. بوابة كلمة مرور الألغاز -->
+        <div id="view-puzzle-pass" class="hidden">
+            <button class="btn btn-back" onclick="backToCaseHub()">← العودة لصفحة القضية</button>
+            <div class="panel-card pass-box">
+                <span style="font-size: 2.6rem;">🔒</span>
+                <h3 style="color: var(--navy-dark); margin: 10px 0 6px;">منطقة محمية بكلمة مرور</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 18px;">
+                    أدخل كلمة المرور الخاصة بألغاز هذه القضية للمتابعة:
+                </p>
+                <input type="password" id="input-puzzle-pass" class="input-field" placeholder="أدخل كلمة المرور هنا..." style="text-align: center; font-size: 1.15rem; letter-spacing: 2px;" onkeydown="if(event.key==='Enter') verifyPuzzlePassword()">
+                <div id="puzzle-pass-error" class="alert-msg alert-error hidden">❌ كلمة المرور غير صحيحة! تأكد من الرمز وحاول مجدداً.</div>
+                <button class="btn btn-gold" style="width: 100%;" onclick="verifyPuzzlePassword()">فتح ألغاز القضية</button>
+            </div>
+        </div>
+
+        <!-- 4. مربعات الألغاز -->
+        <div id="view-puzzles-grid" class="hidden">
+            <button class="btn btn-back" onclick="backToCaseHub()">← العودة لصفحة القضية</button>
+            <div class="section-header">
+                <h2>🧩 ألغاز القضية والأدلة التقنية</h2>
+                <p>اضغط على أي مربع لعرض صفحة الحل والتفسير الجنائي الكامل له</p>
+            </div>
+            <div id="puzzles-cards-container" class="grid-cards"></div>
+        </div>
+
+        <!-- 5. صفحة حل اللغز -->
+        <div id="view-single-puzzle" class="hidden">
+            <button class="btn btn-back" onclick="openPuzzlesGrid()">← العودة لمربعات الألغاز</button>
+            <div class="panel-card">
+                <span class="card-badge" id="single-puzzle-badge">حل اللغز</span>
+                <h2 id="single-puzzle-title" style="color: var(--navy-dark); margin-bottom: 14px;"></h2>
+                <div style="background: #f8fafc; border-right: 4px solid var(--gold); padding: 20px; border-radius: 8px; white-space: pre-line; font-size: 1.02rem;" id="single-puzzle-solution"></div>
+            </div>
+        </div>
+
+        <!-- 6. استمارة الاتهام النهائية وأوراق الحل -->
+        <div id="view-accusation-form" class="hidden">
+            <button class="btn btn-back" onclick="backToCaseHub()">← العودة لصفحة القضية</button>
+            <div class="panel-card">
+                <div class="section-header" style="margin-bottom: 20px;">
+                    <h2>⚖️ استمارة الاتهام النهائية</h2>
+                    <p>أجب بدقة على الأسئلة التالية، ثم اضغط على زر "تحقق من الإجابات" لفتح ظرف الحل وحكم المحكمة</p>
+                </div>
+
+                <div id="accusation-questions-container"></div>
+                <div id="accusation-error-box" class="alert-msg alert-error hidden"></div>
+
+                <button class="btn btn-gold" style="width: 100%; padding: 14px; font-size: 1.05rem; margin-top: 10px;" onclick="verifyAccusationAnswers()">
+                    ✔️ تحقق من الإجابات وافتح ظرف الحل النهائي
+                </button>
+            </div>
+
+            <!-- أوراق الحل وحكم المحكمة -->
+            <div id="view-verdict-docs" class="hidden">
+                <div class="alert-msg alert-success" style="margin-top: 25px; font-size: 1.1rem;">
+                    🎉 أحسنت أيها المحقق! جميع استنتاجاتك مطابقة للأدلة الجنائية. تم فتح الوثائق السرية:
+                </div>
+
+                <div class="official-doc">
+                    <div class="official-doc-header">
+                        <h3>تقرير المحقق الاستشاري "بوارو" الختامي</h3>
+                        <span class="stamp-badge">سري للغاية - خلاصة التحقيق</span>
+                    </div>
+                    <div id="doc-poirot-report" class="verdict-content"></div>
+                </div>
+
+                <div class="official-doc" style="border-color: #7c2d12;">
+                    <div class="official-doc-header">
+                        <h3>الجمهورية العربية السورية - وزارة العدل</h3>
+                        <p style="font-weight: 700; color: var(--navy-main);">محكمة البداية الجزائية بدمشق | القرار القضائي النهائي</p>
+                        <span class="stamp-badge" style="border-color: var(--navy-main); color: var(--navy-main);">حكم قضائي مبرم</span>
+                    </div>
+                    <div id="doc-court-verdict" class="verdict-content"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        بوارو (Poirot) للألعاب البوليسية والتحقيقات الجنائية &copy; 2026
+    </footer>
+
+    <script>
+        const STORAGE_KEY = "poirot_detective_cases_v2";
+        let casesData = [];
+        let activeCaseIndex = 0;
+
+        async function loadCasesFromJson() {
+            try {
+                const response = await fetch('./cases.json?t=' + Date.now());
+                if (response.ok) {
+                    casesData = await response.json();
+                    showPlayerHome();
+                    return;
+                }
+            } catch (err) {
+                console.warn("جاري استخدام النسخة المحفوظة محلياً...");
+            }
+
+            const localSaved = localStorage.getItem(STORAGE_KEY);
+            if (localSaved) {
+                casesData = JSON.parse(localSaved);
+            }
+            showPlayerHome();
+        }
+
+        function hideAllViews() {
+            ["view-player-home", "view-case-hub", "view-puzzle-pass", "view-puzzles-grid", "view-single-puzzle", "view-accusation-form"]
+                .forEach(id => document.getElementById(id).classList.add("hidden"));
+        }
+
+        function showPlayerHome() {
+            hideAllViews();
+            document.getElementById("view-player-home").classList.remove("hidden");
+            const container = document.getElementById("cases-list-grid");
+            container.innerHTML = "";
+
+            casesData.forEach((c, idx) => {
+                const card = document.createElement("div");
+                card.className = "card-box";
+                card.onclick = () => selectCase(idx);
+                card.innerHTML = `
+                    <span class="card-badge">${escapeHtml(c.code || "ملف تحقيق")}</span>
+                    <h3>${escapeHtml(c.title)}</h3>
+                    <p>${escapeHtml(c.desc)}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function selectCase(idx) {
+            activeCaseIndex = idx;
+            const c = casesData[activeCaseIndex];
+            hideAllViews();
+            document.getElementById("hub-case-code").textContent = c.code || "ملف تحقيق";
+            document.getElementById("hub-case-title").textContent = c.title;
+            document.getElementById("hub-case-desc").textContent = c.desc;
+            document.getElementById("view-case-hub").classList.remove("hidden");
+        }
+
+        function backToCaseHub() { selectCase(activeCaseIndex); }
+
+        function openPuzzlePasswordGate() {
+            hideAllViews();
+            document.getElementById("input-puzzle-pass").value = "";
+            document.getElementById("puzzle-pass-error").classList.add("hidden");
+            document.getElementById("view-puzzle-pass").classList.remove("hidden");
+            setTimeout(() => document.getElementById("input-puzzle-pass").focus(), 100);
+        }
+
+        function verifyPuzzlePassword() {
+            const entered = document.getElementById("input-puzzle-pass").value.trim();
+            const currentCase = casesData[activeCaseIndex];
+            if (entered === String(currentCase.puzzlePassword).trim()) {
+                document.getElementById("puzzle-pass-error").classList.add("hidden");
+                openPuzzlesGrid();
+            } else {
+                document.getElementById("puzzle-pass-error").classList.remove("hidden");
+            }
+        }
+
+        function openPuzzlesGrid() {
+            hideAllViews();
+            const currentCase = casesData[activeCaseIndex];
+            const container = document.getElementById("puzzles-cards-container");
+            container.innerHTML = "";
+
+            currentCase.puzzles.forEach((p, pIdx) => {
+                const card = document.createElement("div");
+                card.className = "card-box";
+                card.onclick = () => openSinglePuzzleSolution(pIdx);
+                card.innerHTML = `
+                    <span class="card-badge">لغز رقم #${pIdx + 1}</span>
+                    <h3>${escapeHtml(p.title)}</h3>
+                    <p>${escapeHtml(p.hint || "اضغط لعرض الحل الكامل")}</p>
+                `;
+                container.appendChild(card);
+            });
+
+            document.getElementById("view-puzzles-grid").classList.remove("hidden");
+        }
+
+        function openSinglePuzzleSolution(pIdx) {
+            hideAllViews();
+            const p = casesData[activeCaseIndex].puzzles[pIdx];
+            document.getElementById("single-puzzle-badge").textContent = `حل اللغز #${pIdx + 1}`;
+            document.getElementById("single-puzzle-title").textContent = p.title;
+            document.getElementById("single-puzzle-solution").textContent = p.solution;
+            document.getElementById("view-single-puzzle").classList.remove("hidden");
+        }
+
+        function openAccusationForm() {
+            hideAllViews();
+            const currentCase = casesData[activeCaseIndex];
+            const container = document.getElementById("accusation-questions-container");
+            container.innerHTML = "";
+            document.getElementById("accusation-error-box").classList.add("hidden");
+            document.getElementById("view-verdict-docs").classList.add("hidden");
+
+            currentCase.questions.forEach((q, qIdx) => {
+                const qCard = document.createElement("div");
+                qCard.className = "question-card";
+
+                let inputHtml = "";
+                if (q.type === "text") {
+                    inputHtml = `<input type="text" id="player-q-text-${qIdx}" class="input-field" style="margin-bottom:0; background:#fff;" placeholder="${escapeHtml(q.placeholder || 'اكتب إجابتك هنا...')}">`;
+                } else {
+                    inputHtml = (q.options || []).map((opt, oIdx) => `
+                        <label class="mcq-option">
+                            <input type="radio" name="player-q-mcq-${qIdx}" value="${oIdx}">
+                            <span>${escapeHtml(opt)}</span>
+                        </label>
+                    `).join("");
+                }
+
+                qCard.innerHTML = `<h4>${escapeHtml(q.question)}</h4>${inputHtml}`;
+                container.appendChild(qCard);
+            });
+
+            document.getElementById("view-accusation-form").classList.remove("hidden");
+        }
+
+        function normalizeArabicText(str) {
+            if (!str) return "";
+            return str.toString().trim().toLowerCase()
+                .replace(/[أإآ]/g, "ا")
+                .replace(/ة/g, "ه")
+                .replace(/ى/g, "ي")
+                .replace(/[\u064B-\u065F]/g, "")
+                .replace(/\s+/g, " ");
+        }
+
+        function verifyAccusationAnswers() {
+            const currentCase = casesData[activeCaseIndex];
+            const errorBox = document.getElementById("accusation-error-box");
+            errorBox.classList.add("hidden");
+
+            for (let i = 0; i < currentCase.questions.length; i++) {
+                const q = currentCase.questions[i];
+
+                if (q.type === "text") {
+                    const textInput = document.getElementById(`player-q-text-${i}`);
+                    const rawVal = textInput ? textInput.value.trim() : "";
+
+                    if (!rawVal) {
+                        errorBox.textContent = `⚠️ يرجى كتابة الإجابة في السؤال رقم (${i + 1}) قبل المتابعة.`;
+                        errorBox.classList.remove("hidden");
+                        return;
+                    }
+
+                    if (q.validationMode !== "any") {
+                        const normalizedPlayer = normalizeArabicText(rawVal);
+                        const keywords = (q.acceptedAnswers || "").split(",").map(k => normalizeArabicText(k)).filter(Boolean);
+                        const isMatch = keywords.some(kw => normalizedPlayer.includes(kw));
+                        if (!isMatch && keywords.length > 0) {
+                            errorBox.textContent = `❌ الإجابة المكتوبة في السؤال رقم (${i + 1}) غير دقيقة! راجع الأدلة جيداً وحاول مرة أخرى.`;
+                            errorBox.classList.remove("hidden");
+                            return;
+                        }
+                    }
+                } else {
+                    const selected = document.querySelector(`input[name="player-q-mcq-${i}"]:checked`);
+                    if (!selected) {
+                        errorBox.textContent = `⚠️ يرجى اختيار إجابة للسؤال رقم (${i + 1}) قبل المتابعة.`;
+                        errorBox.classList.remove("hidden");
+                        return;
+                    }
+                    if (parseInt(selected.value, 10) !== parseInt(q.correctIndex, 10)) {
+                        errorBox.textContent = `❌ الإجابة المختارة في السؤال رقم (${i + 1}) غير صحيحة! دقق في أوراق القضية مجدداً.`;
+                        errorBox.classList.remove("hidden");
+                        return;
+                    }
+                }
+            }
+
+            document.getElementById("doc-poirot-report").textContent = currentCase.poirotReport;
+            document.getElementById("doc-court-verdict").textContent = currentCase.courtVerdict;
+            const verdictDocs = document.getElementById("view-verdict-docs");
+            verdictDocs.classList.remove("hidden");
+            verdictDocs.scrollIntoView({ behavior: "smooth" });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return "";
+            return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+
+        loadCasesFromJson();
+    </script>
+</body>
+</html>
