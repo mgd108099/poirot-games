@@ -49,7 +49,7 @@
             margin: 0 auto 12px;
             background: #ffffff;
             border-radius: 50%;
-            padding: 8px;
+            padding: 6px;
             border: 3px solid var(--gold);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
             display: flex;
@@ -58,10 +58,11 @@
             overflow: hidden;
         }
 
-        .logo-wrapper img, .logo-wrapper svg {
-            width: 88%;
-            height: 88%;
-            object-fit: contain;
+        .logo-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
         header h1 {
@@ -278,16 +279,8 @@
 
     <header>
         <div class="logo-wrapper">
-            <!-- إذا رفعت صورة اللوغو باسم logo.png ستظهر تلقائياً، وإلا سيظهر شعار بوارو الكحلي المدمج -->
-            <img src="logo.png" alt="Poirot" onerror="this.style.display='none'; document.getElementById('fallback-svg').style.display='block';">
-            <svg id="fallback-svg" style="display:none;" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <path d="M40 95 C40 42, 160 42, 160 95 Z" fill="#0d2b5c"/>
-                <path d="M38 86 L162 86 L162 94 L38 94 Z" fill="#ffffff"/>
-                <path d="M20 94 C20 105, 180 105, 180 94 C180 89, 165 91, 160 91 L40 91 C35 91, 20 89, 20 94 Z" fill="#0d2b5c"/>
-                <path d="M55 100 L55 118 L45 135 L56 138 M56 155 C56 168, 65 172, 82 172 L95 190 L145 162 L130 135 C135 120, 135 105, 120 100" fill="none" stroke="#0d2b5c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M56 146 C44 140, 32 146, 32 153 C32 158, 42 159, 47 154 C43 157, 35 155, 37 150 C39 146, 48 148, 56 152 C64 148, 76 144, 83 151 C85 154, 79 158, 75 154 C80 160, 92 158, 92 150 C92 141, 72 139, 56 146 Z" fill="#0d2b5c"/>
-                <path d="M84 173 L95 192 L145 162 L132 142 Z" fill="#0d2b5c"/>
-            </svg>
+            <!-- سيتم جلب اللوغو المخصص المسمى logo.png مباشرة -->
+            <img src="logo.png" alt="Poirot Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><path d=%22M40 95 C40 42, 160 42, 160 95 Z%22 fill=%22%230d2b5c%22/></svg>'">
         </div>
         <h1>بوارو | <span>Poirot</span></h1>
         <p>بوابة التحقيقات الجنائية والألغاز التفاعلية</p>
@@ -416,7 +409,6 @@
         let casesData = [];
         let activeCaseIndex = 0;
 
-        // جلب البيانات من ملف cases.json (مع دعم المعاينة المحلية)
         async function loadCasesFromJson() {
             try {
                 const response = await fetch('./cases.json?t=' + Date.now());
@@ -426,7 +418,7 @@
                     return;
                 }
             } catch (err) {
-                console.warn("جاري استخدام النسخة المحفوظة محلياً في المتصفح...");
+                console.warn("جاري استخدام النسخة المحفوظة محلياً...");
             }
 
             const localSaved = localStorage.getItem(STORAGE_KEY);
