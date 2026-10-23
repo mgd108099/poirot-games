@@ -61,7 +61,7 @@
         .logo-wrapper img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
             border-radius: 50%;
         }
 
@@ -259,6 +259,45 @@
         }
 
         .verdict-content { white-space: pre-line; line-height: 1.9; font-size: 1.02rem; color: #1e293b; }
+
+        /* تنسيق صور الحلول والوثائق */
+        .evidence-image-box {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .evidence-image-box img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            cursor: zoom-in;
+            transition: transform 0.2s;
+        }
+        .evidence-image-box img:hover {
+            transform: scale(1.01);
+        }
+
+        /* نافذة تكبير الصورة (Lightbox) */
+        .lightbox-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 22, 40, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+            cursor: zoom-out;
+        }
+        .lightbox-overlay img {
+            max-width: 95%;
+            max-height: 92vh;
+            border-radius: 8px;
+            border: 2px solid var(--gold);
+            background: #fff;
+        }
+
         .hidden { display: none !important; }
 
         .alert-msg { padding: 12px 16px; border-radius: 8px; margin: 12px 0; font-weight: 700; text-align: center; }
@@ -279,8 +318,15 @@
 
     <header>
         <div class="logo-wrapper">
-            <!-- سيتم جلب اللوغو المخصص المسمى logo.png مباشرة -->
-            <img src="logo.png" alt="Poirot Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><path d=%22M40 95 C40 42, 160 42, 160 95 Z%22 fill=%22%230d2b5c%22/></svg>'">
+            <img src="logo.png" alt="Poirot Logo" onerror="this.style.display='none'; document.getElementById('fallback-svg').style.display='block';">
+            <svg id="fallback-svg" style="display:none; width:88%; height:88%;" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <path d="M40 95 C40 42, 160 42, 160 95 Z" fill="#0d2b5c"/>
+                <path d="M38 86 L162 86 L162 94 L38 94 Z" fill="#ffffff"/>
+                <path d="M20 94 C20 105, 180 105, 180 94 C180 89, 165 91, 160 91 L40 91 C35 91, 20 89, 20 94 Z" fill="#0d2b5c"/>
+                <path d="M55 100 L55 118 L45 135 L56 138 M56 155 C56 168, 65 172, 82 172 L95 190 L145 162 L130 135 C135 120, 135 105, 120 100" fill="none" stroke="#0d2b5c" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M56 146 C44 140, 32 146, 32 153 C32 158, 42 159, 47 154 C43 157, 35 155, 37 150 C39 146, 48 148, 56 152 C64 148, 76 144, 83 151 C85 154, 79 158, 75 154 C80 160, 92 158, 92 150 C92 141, 72 139, 56 146 Z" fill="#0d2b5c"/>
+                <path d="M84 173 L95 192 L145 162 L132 142 Z" fill="#0d2b5c"/>
+            </svg>
         </div>
         <h1>بوارو | <span>Poirot</span></h1>
         <p>بوابة التحقيقات الجنائية والألغاز التفاعلية</p>
@@ -346,13 +392,17 @@
             <div id="puzzles-cards-container" class="grid-cards"></div>
         </div>
 
-        <!-- 5. صفحة حل اللغز -->
+        <!-- 5. صفحة حل اللغز المفرد (نص + صورة) -->
         <div id="view-single-puzzle" class="hidden">
             <button class="btn btn-back" onclick="openPuzzlesGrid()">← العودة لمربعات الألغاز</button>
             <div class="panel-card">
                 <span class="card-badge" id="single-puzzle-badge">حل اللغز</span>
                 <h2 id="single-puzzle-title" style="color: var(--navy-dark); margin-bottom: 14px;"></h2>
-                <div style="background: #f8fafc; border-right: 4px solid var(--gold); padding: 20px; border-radius: 8px; white-space: pre-line; font-size: 1.02rem;" id="single-puzzle-solution"></div>
+                <div id="single-puzzle-solution" style="background: #f8fafc; border-right: 4px solid var(--gold); padding: 20px; border-radius: 8px; white-space: pre-line; font-size: 1.02rem;"></div>
+                <div id="single-puzzle-img-box" class="evidence-image-box hidden">
+                    <img id="single-puzzle-img" src="" alt="صورة حل اللغز" onclick="openLightbox(this.src)">
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 6px;">🔍 اضغط على الصورة لتكبيرها</p>
+                </div>
             </div>
         </div>
 
@@ -373,20 +423,26 @@
                 </button>
             </div>
 
-            <!-- أوراق الحل وحكم المحكمة -->
+            <!-- أوراق الحل وحكم المحكمة (نص أو صور) -->
             <div id="view-verdict-docs" class="hidden">
                 <div class="alert-msg alert-success" style="margin-top: 25px; font-size: 1.1rem;">
                     🎉 أحسنت أيها المحقق! جميع استنتاجاتك مطابقة للأدلة الجنائية. تم فتح الوثائق السرية:
                 </div>
 
+                <!-- الوثيقة 1: تقرير بوارو -->
                 <div class="official-doc">
                     <div class="official-doc-header">
                         <h3>تقرير المحقق الاستشاري "بوارو" الختامي</h3>
                         <span class="stamp-badge">سري للغاية - خلاصة التحقيق</span>
                     </div>
                     <div id="doc-poirot-report" class="verdict-content"></div>
+                    <div id="doc-poirot-img-box" class="evidence-image-box hidden">
+                        <img id="doc-poirot-img" src="" alt="ورقة الاستنتاج النهائية" onclick="openLightbox(this.src)">
+                        <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 6px;">🔍 اضغط على الوثيقة لتكبيرها</p>
+                    </div>
                 </div>
 
+                <!-- الوثيقة 2: حكم المحكمة -->
                 <div class="official-doc" style="border-color: #7c2d12;">
                     <div class="official-doc-header">
                         <h3>الجمهورية العربية السورية - وزارة العدل</h3>
@@ -394,10 +450,19 @@
                         <span class="stamp-badge" style="border-color: var(--navy-main); color: var(--navy-main);">حكم قضائي مبرم</span>
                     </div>
                     <div id="doc-court-verdict" class="verdict-content"></div>
+                    <div id="doc-court-img-box" class="evidence-image-box hidden">
+                        <img id="doc-court-img" src="" alt="صورة حكم المحكمة" onclick="openLightbox(this.src)">
+                        <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 6px;">🔍 اضغط على الوثيقة لتكبيرها</p>
+                    </div>
                 </div>
             </div>
         </div>
 
+    </div>
+
+    <!-- نافذة تكبير الصور عند الضغط عليها -->
+    <div id="lightbox-modal" class="lightbox-overlay hidden" onclick="closeLightbox()">
+        <img id="lightbox-img" src="" alt="تكبير الوثيقة">
     </div>
 
     <footer>
@@ -469,7 +534,7 @@
             document.getElementById("input-puzzle-pass").value = "";
             document.getElementById("puzzle-pass-error").classList.add("hidden");
             document.getElementById("view-puzzle-pass").classList.remove("hidden");
-            setTimeout(() => document.getElementById("input-puzzle-pass").focus(), 100);
+            setTimeout(() => document.getElementId("input-puzzle-pass").focus(), 100);
         }
 
         function verifyPuzzlePassword() {
@@ -509,7 +574,25 @@
             const p = casesData[activeCaseIndex].puzzles[pIdx];
             document.getElementById("single-puzzle-badge").textContent = `حل اللغز #${pIdx + 1}`;
             document.getElementById("single-puzzle-title").textContent = p.title;
-            document.getElementById("single-puzzle-solution").textContent = p.solution;
+
+            const solTextEl = document.getElementById("single-puzzle-solution");
+            if (p.solution && p.solution.trim() !== "") {
+                solTextEl.textContent = p.solution;
+                solTextEl.classList.remove("hidden");
+            } else {
+                solTextEl.classList.add("hidden");
+            }
+
+            const imgBox = document.getElementById("single-puzzle-img-box");
+            const imgEl = document.getElementById("single-puzzle-img");
+            if (p.image && p.image.trim() !== "") {
+                imgEl.src = p.image;
+                imgBox.classList.remove("hidden");
+            } else {
+                imgEl.src = "";
+                imgBox.classList.add("hidden");
+            }
+
             document.getElementById("view-single-puzzle").classList.remove("hidden");
         }
 
@@ -597,11 +680,47 @@
                 }
             }
 
-            document.getElementById("doc-poirot-report").textContent = currentCase.poirotReport;
-            document.getElementById("doc-court-verdict").textContent = currentCase.courtVerdict;
+            // عرض تقرير بوارو (نص + صورة إن وجدت)
+            const repTextEl = document.getElementById("doc-poirot-report");
+            repTextEl.textContent = currentCase.poirotReport || "";
+            repTextEl.style.display = (currentCase.poirotReport && currentCase.poirotReport.trim() !== "") ? "block" : "none";
+
+            const repImgBox = document.getElementById("doc-poirot-img-box");
+            const repImg = document.getElementById("doc-poirot-img");
+            if (currentCase.poirotReportImage && currentCase.poirotReportImage.trim() !== "") {
+                repImg.src = currentCase.poirotReportImage;
+                repImgBox.classList.remove("hidden");
+            } else {
+                repImgBox.classList.add("hidden");
+            }
+
+            // عرض حكم المحكمة (نص + صورة إن وجدت)
+            const courtTextEl = document.getElementById("doc-court-verdict");
+            courtTextEl.textContent = currentCase.courtVerdict || "";
+            courtTextEl.style.display = (currentCase.courtVerdict && currentCase.courtVerdict.trim() !== "") ? "block" : "none";
+
+            const courtImgBox = document.getElementById("doc-court-img-box");
+            const courtImg = document.getElementById("doc-court-img");
+            if (currentCase.courtVerdictImage && currentCase.courtVerdictImage.trim() !== "") {
+                courtImg.src = currentCase.courtVerdictImage;
+                courtImgBox.classList.remove("hidden");
+            } else {
+                courtImgBox.classList.add("hidden");
+            }
+
             const verdictDocs = document.getElementById("view-verdict-docs");
             verdictDocs.classList.remove("hidden");
             verdictDocs.scrollIntoView({ behavior: "smooth" });
+        }
+
+        function openLightbox(src) {
+            if (!src) return;
+            document.getElementById("lightbox-img").src = src;
+            document.getElementById("lightbox-modal").classList.remove("hidden");
+        }
+
+        function closeLightbox() {
+            document.getElementById("lightbox-modal").classList.add("hidden");
         }
 
         function escapeHtml(str) {
