@@ -3,31 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوارو | لوحة تحكم المدير (Admin)</title>
+    <title>بوارو | لوحة تحكم المدير الشاملة (Admin)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
+
         :root {
-            --navy-dark: #0a1628; --navy-main: #13284c; --navy-light: #1e3a8a;
-            --gold: #c59b27; --gold-light: #e5c158; --bg-gray: #f1f5f9;
-            --card-bg: #ffffff; --text-dark: #1e293b; --text-muted: #64748b;
-            --danger: #b91c1c; --success: #047857;
+            --navy-dark: #0a1628;
+            --navy-main: #13284c;
+            --navy-light: #1e3a8a;
+            --gold: #c59b27;
+            --gold-light: #e5c158;
+            --bg-gray: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --danger: #b91c1c;
+            --success: #047857;
         }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Cairo', sans-serif; background: var(--bg-gray); color: var(--text-dark); line-height: 1.6; }
-        .admin-topbar { background: var(--navy-dark); color: #fff; padding: 16px 24px; border-bottom: 4px solid var(--gold); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-        .container { max-width: 950px; margin: 28px auto; padding: 0 18px; }
-        .panel-card { background: var(--card-bg); border: 1px solid #cbd5e1; border-radius: 14px; padding: 26px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--navy-main); color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-family: 'Cairo', sans-serif; font-size: 0.92rem; font-weight: 700; cursor: pointer; text-decoration: none; }
+
+        .admin-topbar {
+            background: var(--navy-dark);
+            color: #fff;
+            padding: 16px 24px;
+            border-bottom: 4px solid var(--gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .container { max-width: 980px; margin: 28px auto; padding: 0 18px; }
+
+        .panel-card {
+            background: var(--card-bg);
+            border: 1px solid #cbd5e1;
+            border-radius: 14px;
+            padding: 26px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--navy-main);
+            color: #fff;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .btn:hover { background: var(--navy-light); }
         .btn-gold { background: var(--gold); color: var(--navy-dark); }
+        .btn-gold:hover { background: var(--gold-light); }
         .btn-success { background: var(--success); color: #fff; }
         .btn-danger { background: var(--danger); color: #fff; }
-        .input-field { width: 100%; padding: 11px 14px; border: 2px solid #cbd5e1; border-radius: 8px; font-family: 'Cairo', sans-serif; font-size: 0.96rem; margin-bottom: 14px; }
-        .label-title { display: block; font-weight: 700; margin-bottom: 6px; color: var(--navy-dark); font-size: 0.92rem; }
-        .admin-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; border-bottom: 2px solid #cbd5e1; padding-bottom: 12px; }
-        .admin-tab-btn { background: #e2e8f0; color: var(--navy-dark); border: none; padding: 9px 14px; border-radius: 8px; font-family: 'Cairo', sans-serif; font-weight: 700; cursor: pointer; font-size: 0.88rem; }
+        .btn-outline { background: transparent; color: var(--navy-main); border: 2px solid var(--navy-main); }
+
+        .input-field {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            background: #fff;
+        }
+        .input-field:focus { outline: none; border-color: var(--navy-main); }
+
+        .label-title { display: block; font-weight: 700; margin-bottom: 5px; color: var(--navy-dark); font-size: 0.92rem; }
+
+        .admin-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 22px;
+            border-bottom: 2px solid #cbd5e1;
+            padding-bottom: 12px;
+        }
+
+        .admin-tab-btn {
+            background: #e2e8f0;
+            color: var(--navy-dark);
+            border: none;
+            padding: 9px 15px;
+            border-radius: 8px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.88rem;
+        }
         .admin-tab-btn.active { background: var(--navy-main); color: #fff; }
-        .admin-item-box { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 18px; margin-bottom: 16px; }
+
+        .admin-item-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 16px;
+        }
+
+        .image-upload-zone {
+            background: #eff6ff;
+            border: 1px dashed #3b82f6;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 8px;
+        }
+
+        .img-preview-mini {
+            max-height: 150px;
+            max-width: 100%;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            margin-top: 10px;
+            display: block;
+        }
+
         .alert-msg { padding: 12px 16px; border-radius: 8px; margin: 12px 0; font-weight: 700; text-align: center; }
         .alert-error { background: #fef2f2; color: var(--danger); border: 1px solid #fecaca; }
         .alert-success { background: #ecfdf5; color: var(--success); border: 1px solid #a7f3d0; }
@@ -37,20 +141,43 @@
 <body>
 
     <div class="admin-topbar">
-        <h2>🛠️ لوحة تحكم بوارو (إدارة القضية والمهمات - admin.html)</h2>
-        <a href="index.html" target="_blank" class="btn btn-gold">👁️ فتح صفحة اللاعبين (index.html)</a>
+        <div>
+            <h2>🛠️ لوحة تحكم بوارو الشاملة (إدارة القضية، الهاتف، الألغاز، والمهمات)</h2>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <a href="index.html" target="_blank" class="btn btn-gold">👁️ فتح صفحة اللاعبين (index.html)</a>
+        </div>
     </div>
 
     <div class="container">
+
+        <!-- شاشة تسجيل دخول المدير -->
         <div id="view-login" class="panel-card" style="max-width: 440px; margin: 40px auto; text-align: center;">
             <span style="font-size: 2.8rem;">🛡️</span>
             <h3 style="margin: 10px 0;">تسجيل دخول المدير</h3>
-            <input type="password" id="admin-pin-input" class="input-field" placeholder="رمز المدير (2026)" style="text-align: center;" onkeydown="if(event.key==='Enter') verifyAdminPin()">
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">أدخل رمز الحماية الخاص بالمدير لفتح لوحة التحكم:</p>
+            <input type="password" id="admin-pin-input" class="input-field" placeholder="رمز المدير (الافتراضي: 2026)" style="text-align: center;" onkeydown="if(event.key==='Enter') verifyAdminPin()">
             <div id="login-error" class="alert-msg alert-error hidden">❌ رمز المدير غير صحيح!</div>
             <button class="btn btn-gold" style="width: 100%;" onclick="verifyAdminPin()">دخول للوحة التحكم</button>
         </div>
 
+        <!-- لوحة التحكم الكاملة -->
         <div id="view-dashboard" class="panel-card hidden">
+
+            <!-- شريط اختيار وإدارة القضايا -->
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; background: #e2e8f0; padding: 14px 16px; border-radius: 10px;">
+                <div style="flex: 1; min-width: 240px;">
+                    <label class="label-title">📂 اختر القضية التي تريد تعديلها:</label>
+                    <select id="admin-case-selector" class="input-field" style="margin-bottom: 0;" onchange="loadSelectedCase()"></select>
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn btn-success" onclick="createNewCase()">+ إضافة قضية جديدة</button>
+                    <button class="btn btn-danger" onclick="deleteCurrentCase()">🗑️ حذف القضية</button>
+                    <button class="btn btn-outline" onclick="reloadFromServerJson()" title="إلغاء التعديلات المؤقتة وإعادة التحميل من ملف cases.json">🔄 استعادة من السيرفر</button>
+                </div>
+            </div>
+
+            <!-- أزرار التبويبات الستة -->
             <div class="admin-tabs">
                 <button class="admin-tab-btn active" onclick="switchTab('tab-basic', this)">1. بيانات القضية وكلمة المرور</button>
                 <button class="admin-tab-btn" onclick="switchTab('tab-phone', this)">2. هاتف الضحية (iPhone)</button>
@@ -62,78 +189,211 @@
 
             <div id="status-notice" class="alert-msg alert-success hidden"></div>
 
-            <!-- 1. بيانات القضية -->
+            <!-- التبويب 1: بيانات القضية وكلمة المرور -->
             <div id="tab-basic" class="tab-pane">
                 <div class="admin-item-box">
                     <label class="label-title">اسم القضية:</label>
-                    <input type="text" id="adm-title" class="input-field">
+                    <input type="text" id="adm-title" class="input-field" placeholder="مثال: عشاء الوداع الأخير">
+
                     <label class="label-title">رمز / رقم الملف:</label>
-                    <input type="text" id="adm-code" class="input-field">
-                    <label class="label-title">الملخص التشويقي للقضية:</label>
+                    <input type="text" id="adm-code" class="input-field" placeholder="مثال: ملف القضية رقم: 511 / ب">
+
+                    <label class="label-title">الملخص التشويقي للقضية (يظهر على الواجهة):</label>
                     <textarea id="adm-desc" class="input-field" rows="4"></textarea>
+
                     <label class="label-title">🔑 كلمة المرور لفتح القضية بعد مسح الباركود:</label>
-                    <input type="text" id="adm-pass" class="input-field" style="font-weight:bold;">
+                    <input type="text" id="adm-pass" class="input-field" style="font-weight: 800; color: var(--navy-light);">
                 </div>
             </div>
 
-            <!-- 2. هاتف الضحية -->
+            <!-- التبويب 2: هاتف الضحية (رمز القفل + الرسائل النصية + المذكرة) -->
             <div id="tab-phone" class="tab-pane hidden">
                 <div class="admin-item-box">
-                    <label class="label-title">📱 رمز قفل هاتف الضحية (6 أرقام):</label>
-                    <input type="text" id="adm-phone-code" class="input-field" style="font-weight:bold;">
-                    <label class="label-title">عنوان مذكرة الآيفون (الساعة 06:15 مساءً):</label>
-                    <input type="text" id="adm-note-title" class="input-field">
+                    <h4 style="color: var(--navy-main); margin-bottom: 10px;">🔒 إعدادات قفل الهاتف</h4>
+                    <label class="label-title">📱 رمز قفل هاتف الضحية (مثال: 250401):</label>
+                    <input type="text" id="adm-phone-code" class="input-field" style="font-weight: 800; letter-spacing: 2px;">
+
+                    <label class="label-title">تلميح قفل الهاتف (يظهر للاعب تحت شاشة القفل):</label>
+                    <input type="text" id="adm-phone-hint" class="input-field" placeholder="تلميح القفل: (يوم العرض) + (رقم القاعة) + (رقم المقعد) من اليسار إلى اليمين">
+                </div>
+
+                <div class="admin-item-box">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <h4 style="color: var(--navy-main);">💬 الرسائل النصية المستخرجة (SMS / iMessage)</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">أضف وعدّل الرسائل التي تظهر للاعب عند فتح قفل الهاتف</p>
+                        </div>
+                        <button class="btn btn-success" onclick="addPhoneMessage()">+ إضافة رسالة نصية جديدة</button>
+                    </div>
+                    <div id="adm-phone-messages-container"></div>
+                </div>
+
+                <div class="admin-item-box">
+                    <h4 style="color: var(--navy-main); margin-bottom: 10px;">📝 تطبيق الملاحظات (Apple Notes) داخل الهاتف</h4>
+                    <label class="label-title">عنوان المذكرة المحفوظة في الهاتف:</label>
+                    <input type="text" id="adm-note-title" class="input-field" placeholder="مثال: مفاجأة الأرشيف - خطة ما بعد العشاء (الساعة 06:15 مساءً)">
+
                     <label class="label-title">نص المذكرة داخل الهاتف:</label>
                     <textarea id="adm-note-text" class="input-field" rows="4"></textarea>
                 </div>
             </div>
 
-            <!-- 3. الألغاز -->
+            <!-- التبويب 3: حل الألغاز (إضافة، تعديل، حذف، وصور) -->
             <div id="tab-puzzles" class="tab-pane hidden">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <h4>🧩 قائمة الألغاز وحلولها في هذه القضية:</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">يمكنك تعديل عنوان اللغز وتلميحه ونص الحل أو إرفاق صورة توضيحية</p>
+                    </div>
+                    <button class="btn btn-success" onclick="addPuzzle()">+ إضافة لغز جديد</button>
+                </div>
                 <div id="adm-puzzles-container"></div>
             </div>
 
-            <!-- 4. المهمة الأولى -->
+            <!-- التبويب 4: المهمة الأولى ورسالة شريك المحقق -->
             <div id="tab-task1" class="tab-pane hidden">
-                <div class="admin-item-box">
-                    <label class="label-title">📩 نص رسالة شريك المحقق (تظهر بعد حل المهمة الأولى):</label>
-                    <textarea id="adm-partner-msg" class="input-field" rows="6"></textarea>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <h4>🕵️‍♂️ أسئلة المهمة الأولى (المرحلة الأولى):</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">إذا أجاب اللاعب عنها بشكل صحيح، تفتح له رسالة شريك المحقق (للانتقال للمظروف الثاني)</p>
+                    </div>
+                    <button class="btn btn-success" onclick="addTaskQuestion('task1Questions')">+ إضافة سؤال للمهمة الأولى</button>
+                </div>
+                <div id="adm-task1-questions-container"></div>
+
+                <div class="admin-item-box" style="border-right: 5px solid var(--gold);">
+                    <h4 style="color: var(--navy-main); margin-bottom: 10px;">📩 رسالة شريك المحقق (تظهر بعد حل المهمة الأولى بنجاح)</h4>
+                    <label class="label-title">النص الكامل لرسالة شريك المحقق:</label>
+                    <textarea id="adm-partner-msg" class="input-field" rows="7"></textarea>
+
+                    <div class="image-upload-zone">
+                        <label class="label-title">🖼️ صورة مرفقة مع رسالة الشريك (اختياري):</label>
+                        <input type="text" id="adm-partner-img" class="input-field" placeholder="رابط الصورة أو اختر صورة من جهازك..." oninput="updateImagePreview('partner')">
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <label class="btn btn-outline" style="cursor: pointer; padding: 6px 12px; font-size: 0.85rem;">
+                                📷 اختيار صورة من جهازك
+                                <input type="file" accept="image/*" style="display: none;" onchange="handleDocImageUpload(this, 'partner')">
+                            </label>
+                            <button type="button" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="clearDocImage('partner')">🗑️ إزالة الصورة</button>
+                        </div>
+                        <img id="preview-partner-img" class="img-preview-mini hidden" src="" alt="معاينة">
+                    </div>
                 </div>
             </div>
 
-            <!-- 5. المهمة الثانية والحل النهائي -->
+            <!-- التبويب 5: المهمة الثانية والخط الزمني وحكم المحكمة -->
             <div id="tab-task2" class="tab-pane hidden">
-                <div class="admin-item-box">
-                    <label class="label-title">🕵️‍♂️ الخط الزمني الكامل المحلول:</label>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <h4>⚖️ أسئلة المهمة الثانية (الحسم النهائي):</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">إذا أجاب اللاعب عنها بشكل صحيح، يفتح له الخط الزمني الكامل وقرار المحكمة النهائي</p>
+                    </div>
+                    <button class="btn btn-success" onclick="addTaskQuestion('task2Questions')">+ إضافة سؤال للمهمة الثانية</button>
+                </div>
+                <div id="adm-task2-questions-container"></div>
+
+                <!-- الوثيقة 1: الخط الزمني الكامل -->
+                <div class="admin-item-box" style="border-right: 5px solid var(--navy-main);">
+                    <h4 style="color: var(--navy-main); margin-bottom: 10px;">🕵️‍♂️ أولاً: الخط الزمني الكامل المحلول (تقرير بوارو الختامي)</h4>
+                    <label class="label-title">النص الكتابي للخط الزمني والتقرير:</label>
                     <textarea id="adm-report" class="input-field" rows="8"></textarea>
-                    <label class="label-title">⚖️ قرار وحكم المحكمة النهائي:</label>
+
+                    <div class="image-upload-zone">
+                        <label class="label-title">🖼️ صورة وثيقة الخط الزمني (اختياري):</label>
+                        <input type="text" id="adm-report-img" class="input-field" placeholder="رابط الصورة أو اختر صورة من جهازك..." oninput="updateImagePreview('report')">
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <label class="btn btn-outline" style="cursor: pointer; padding: 6px 12px; font-size: 0.85rem;">
+                                📷 اختيار صورة من جهازك
+                                <input type="file" accept="image/*" style="display: none;" onchange="handleDocImageUpload(this, 'report')">
+                            </label>
+                            <button type="button" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="clearDocImage('report')">🗑️ إزالة الصورة</button>
+                        </div>
+                        <img id="preview-report-img" class="img-preview-mini hidden" src="" alt="معاينة">
+                    </div>
+                </div>
+
+                <!-- الوثيقة 2: حكم المحكمة -->
+                <div class="admin-item-box" style="border-right: 5px solid #7c2d12;">
+                    <h4 style="color: var(--navy-main); margin-bottom: 10px;">⚖️ ثانياً: قرار وحكم المحكمة النهائي</h4>
+                    <label class="label-title">النص الكتابي لحكم المحكمة:</label>
                     <textarea id="adm-verdict" class="input-field" rows="8"></textarea>
+
+                    <div class="image-upload-zone">
+                        <label class="label-title">🖼️ صورة وثيقة حكم المحكمة (اختياري):</label>
+                        <input type="text" id="adm-verdict-img" class="input-field" placeholder="رابط الصورة أو اختر صورة من جهازك..." oninput="updateImagePreview('verdict')">
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <label class="btn btn-outline" style="cursor: pointer; padding: 6px 12px; font-size: 0.85rem;">
+                                📷 اختيار صورة من جهازك
+                                <input type="file" accept="image/*" style="display: none;" onchange="handleDocImageUpload(this, 'verdict')">
+                            </label>
+                            <button type="button" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="clearDocImage('verdict')">🗑️ إزالة الصورة</button>
+                        </div>
+                        <img id="preview-verdict-img" class="img-preview-mini hidden" src="" alt="معاينة">
+                    </div>
                 </div>
             </div>
 
-            <!-- 6. النشر والباركود -->
+            <!-- التبويب 6: الباركود وحفظ ونشر التعديلات -->
             <div id="tab-publish" class="tab-pane hidden">
+                <div class="admin-item-box" style="border-right: 5px solid var(--success);">
+                    <h4>📥 الطريقة الأولى: حفظ وتنزيل ملف (cases.json)</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin: 8px 0 14px;">
+                        1. اضغط <b>"حفظ للمعاينة الفورية"</b> لتجربة تعديلاتك فوراً على متصفحك الحالي.<br>
+                        2. اضغط <b>"تنزيل ملف cases.json"</b> ثم ارفع الملف إلى مستودع GitHub لتظهر التعديلات على هواتف جميع اللاعبين.
+                    </p>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-gold" onclick="syncFormToMemory(true)">💾 حفظ للمعاينة الفورية على المتصفح</button>
+                        <button class="btn btn-success" onclick="downloadCasesJson()">⬇️ تنزيل ملف cases.json المحدث</button>
+                    </div>
+                </div>
+
+                <div class="admin-item-box" style="border-right: 5px solid var(--navy-main);">
+                    <h4>🚀 الطريقة الثانية: النشر المباشر إلى GitHub بضغطة زر (بدون رفع يدوي)</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                        <div>
+                            <label class="label-title">اسم المستخدم والمستودع (Owner/Repo):</label>
+                            <input type="text" id="gh-repo" class="input-field" dir="ltr" placeholder="mgd108099/poirot-games">
+                        </div>
+                        <div>
+                            <label class="label-title">الفرع (Branch):</label>
+                            <input type="text" id="gh-branch" class="input-field" dir="ltr" value="main">
+                        </div>
+                    </div>
+                    <label class="label-title">مفتاح GitHub Personal Access Token:</label>
+                    <input type="password" id="gh-token" class="input-field" dir="ltr" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+                    <button class="btn" onclick="publishDirectlyToGitHub()">☁️ نشر التعديلات مباشرة إلى موقع GitHub</button>
+                </div>
+
                 <div class="admin-item-box">
                     <h4>📱 توليد الباركود (QR Code) لصفحة اللاعبين:</h4>
+                    <label class="label-title">رابط صفحة اللاعبين (index.html):</label>
                     <input type="text" id="qr-link-input" class="input-field" dir="ltr">
-                    <button class="btn btn-gold" onclick="generateQR()">توليد الباركود</button>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-gold" onclick="generateQR()">توليد الباركود</button>
+                        <button class="btn btn-outline" onclick="downloadQRImage()">تحميل صورة الباركود للطباعة (PNG)</button>
+                    </div>
                     <div id="qr-container" style="margin-top: 18px; display: flex; justify-content: center; background: #fff; padding: 15px; border-radius: 10px;"></div>
                 </div>
             </div>
 
-            <div style="display: flex; gap: 12px; margin-top: 20px;">
-                <button class="btn btn-gold" style="flex: 1;" onclick="syncFormToMemory(true)">💾 حفظ للمعاينة الفورية</button>
-                <button class="btn btn-success" onclick="downloadCasesJson()">⬇️ تنزيل ملف cases.json المحدث</button>
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #cbd5e1;">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <button class="btn btn-gold" style="flex: 1; padding: 14px; font-size: 1rem;" onclick="syncFormToMemory(true)">💾 حفظ للمعاينة الفورية (يُحدّث الموقع على متصفحك فوراً)</button>
+                <button class="btn btn-success" style="padding: 14px; font-size: 1rem;" onclick="downloadCasesJson()">⬇️ تنزيل ملف cases.json المحدث</button>
             </div>
         </div>
     </div>
 
     <script>
         const STORAGE_KEY = "poirot_detective_cases_v3";
+        const OVERRIDE_KEY = "poirot_local_override_v3";
+        const ADMIN_PIN = "2026";
         let casesData = [];
+        let selectedIdx = 0;
 
         function verifyAdminPin() {
-            if (document.getElementById("admin-pin-input").value.trim() === "2026") {
+            const val = document.getElementById("admin-pin-input").value.trim();
+            if (val === ADMIN_PIN) {
                 document.getElementById("view-login").classList.add("hidden");
                 document.getElementById("view-dashboard").classList.remove("hidden");
                 initAdminData();
@@ -143,29 +403,108 @@
         }
 
         async function initAdminData() {
+            // إذا كان المدير قد حفظ تعديلات محلية للمعاينة، نحمّلها أولاً لكي لا تضيع
+            const hasLocalOverride = localStorage.getItem(OVERRIDE_KEY) === "true";
+            const localSaved = localStorage.getItem(STORAGE_KEY);
+
+            if (hasLocalOverride && localSaved) {
+                try {
+                    casesData = JSON.parse(localSaved);
+                } catch (e) {}
+            }
+
+            if (!casesData || casesData.length === 0) {
+                try {
+                    const res = await fetch('./cases.json?t=' + Date.now());
+                    if (res.ok) {
+                        casesData = await res.json();
+                    }
+                } catch (e) {
+                    console.warn("تعذر جلب cases.json، جاري فحص الذاكرة المحلية...");
+                }
+            }
+
+            if ((!casesData || casesData.length === 0) && localSaved) {
+                casesData = JSON.parse(localSaved);
+            }
+
+            document.getElementById("gh-repo").value = localStorage.getItem("poirot_gh_repo") || "mgd108099/poirot-games";
+            document.getElementById("gh-token").value = localStorage.getItem("poirot_gh_token") || "";
+
+            const playerUrl = window.location.href.replace(/admin\.html.*$/i, "index.html");
+            document.getElementById("qr-link-input").value = playerUrl;
+
+            populateCaseSelector();
+            loadSelectedCase();
+            generateQR();
+        }
+
+        async function reloadFromServerJson() {
+            if (!confirm("هل تريد تجاهل التعديلات المؤقتة في المتصفح وإعادة تحميل البيانات الأصلية من ملف cases.json المرفوع على السيرفر؟")) return;
             try {
                 const res = await fetch('./cases.json?t=' + Date.now());
-                if (res.ok) casesData = await res.json();
-            } catch (e) {}
-            if (!casesData || !casesData.length) {
-                const saved = localStorage.getItem(STORAGE_KEY);
-                if (saved) casesData = JSON.parse(saved);
+                if (res.ok) {
+                    casesData = await res.json();
+                    localStorage.removeItem(OVERRIDE_KEY);
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(casesData));
+                    selectedIdx = 0;
+                    populateCaseSelector();
+                    loadSelectedCase();
+                    showStatus("🔄 تم استعادة البيانات الأصلية من ملف cases.json بنجاح!");
+                }
+            } catch (err) {
+                alert("تعذر قراءة ملف cases.json من السيرفر.");
             }
-            const c = casesData[0];
+        }
+
+        function populateCaseSelector() {
+            const sel = document.getElementById("admin-case-selector");
+            sel.innerHTML = "";
+            casesData.forEach((c, idx) => {
+                const opt = document.createElement("option");
+                opt.value = idx;
+                opt.textContent = `${c.code ? c.code + " - " : ""}${c.title}`;
+                sel.appendChild(opt);
+            });
+            sel.value = selectedIdx;
+        }
+
+        function loadSelectedCase() {
+            selectedIdx = parseInt(document.getElementById("admin-case-selector").value, 10) || 0;
+            const c = casesData[selectedIdx];
             if (!c) return;
+
+            // ضمان وجود المصفوفات الأساسية
+            if (!c.phoneMessages) c.phoneMessages = [];
+            if (!c.puzzles) c.puzzles = [];
+            if (!c.task1Questions) c.task1Questions = [];
+            if (!c.task2Questions) c.task2Questions = [];
+
             document.getElementById("adm-title").value = c.title || "";
             document.getElementById("adm-code").value = c.code || "";
             document.getElementById("adm-desc").value = c.desc || "";
             document.getElementById("adm-pass").value = c.casePassword || "511";
+
             document.getElementById("adm-phone-code").value = c.phonePasscode || "250401";
+            document.getElementById("adm-phone-hint").value = c.phoneHint || "تلميح القفل: (يوم العرض) + (رقم القاعة) + (رقم المقعد) من اليسار إلى اليمين:";
             document.getElementById("adm-note-title").value = c.phoneNoteTitle || "";
             document.getElementById("adm-note-text").value = c.phoneNoteText || "";
-            document.getElementById("adm-partner-msg").value = c.partnerMessage || "";
-            document.getElementById("adm-report").value = c.poirotReport || "";
-            document.getElementById("adm-verdict").value = c.courtVerdict || "";
 
-            document.getElementById("qr-link-input").value = window.location.href.replace(/admin\.html.*$/i, "index.html");
-            generateQR();
+            document.getElementById("adm-partner-msg").value = c.partnerMessage || "";
+            document.getElementById("adm-partner-img").value = c.partnerMessageImage || "";
+            document.getElementById("adm-report").value = c.poirotReport || "";
+            document.getElementById("adm-report-img").value = c.poirotReportImage || "";
+            document.getElementById("adm-verdict").value = c.courtVerdict || "";
+            document.getElementById("adm-verdict-img").value = c.courtVerdictImage || "";
+
+            updateImagePreview('partner');
+            updateImagePreview('report');
+            updateImagePreview('verdict');
+
+            renderPhoneMessages();
+            renderPuzzles();
+            renderTaskQuestions('task1Questions', 'adm-task1-questions-container');
+            renderTaskQuestions('task2Questions', 'adm-task2-questions-container');
         }
 
         function switchTab(tabId, btn) {
@@ -176,41 +515,467 @@
             btn.classList.add("active");
         }
 
+        // ====== ضغط الصور المرفوعة من الجهاز ======
+        function compressAndReadImage(file, callback) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement("canvas");
+                    const MAX_WIDTH = 1000;
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > MAX_WIDTH) {
+                        height = Math.round((height * MAX_WIDTH) / width);
+                        width = MAX_WIDTH;
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, width, height);
+                    callback(canvas.toDataURL("image/jpeg", 0.82));
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // ====== 1. إدارة رسائل هاتف الضحية (SMS) ======
+        function renderPhoneMessages() {
+            const container = document.getElementById("adm-phone-messages-container");
+            container.innerHTML = "";
+            const msgs = casesData[selectedIdx].phoneMessages || [];
+
+            msgs.forEach((m, mIdx) => {
+                const isOut = m.direction && m.direction.includes("صادرة");
+                const div = document.createElement("div");
+                div.className = "admin-item-box";
+                div.style.background = "#ffffff";
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <strong>💬 الرسالة رقم #${mIdx + 1}</strong>
+                        <button class="btn btn-danger" style="padding:4px 10px; font-size:0.8rem;" onclick="removePhoneMessage(${mIdx})">🗑️ حذف الرسالة</button>
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr 1.5fr; gap:10px;">
+                        <div>
+                            <label class="label-title">التوقيت:</label>
+                            <input type="text" class="input-field" value="${escapeHtml(m.time || '')}" placeholder="02:15 ظهراً" oninput="casesData[selectedIdx].phoneMessages[${mIdx}].time = this.value">
+                        </div>
+                        <div>
+                            <label class="label-title">اتجاه الرسالة:</label>
+                            <select class="input-field" onchange="casesData[selectedIdx].phoneMessages[${mIdx}].direction = this.value">
+                                <option value="واردة ↙" ${!isOut ? 'selected' : ''}>واردة ↙ (إلى الضحية)</option>
+                                <option value="صادرة ↗" ${isOut ? 'selected' : ''}>صادرة ↗ (من الضحية)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="label-title">الطرف المقابل (المرسل / المستلم):</label>
+                            <input type="text" class="input-field" value="${escapeHtml(m.contact || '')}" placeholder="مازن السندري" oninput="casesData[selectedIdx].phoneMessages[${mIdx}].contact = this.value">
+                        </div>
+                    </div>
+                    <label class="label-title">نص الرسالة:</label>
+                    <textarea class="input-field" rows="2" style="margin-bottom:0;" oninput="casesData[selectedIdx].phoneMessages[${mIdx}].text = this.value">${escapeHtml(m.text || '')}</textarea>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addPhoneMessage() {
+            casesData[selectedIdx].phoneMessages.push({
+                time: "05:00 مساءً",
+                direction: "واردة ↙",
+                contact: "اسم المرسل",
+                text: "اكتب نص الرسالة هنا..."
+            });
+            renderPhoneMessages();
+        }
+
+        function removePhoneMessage(mIdx) {
+            casesData[selectedIdx].phoneMessages.splice(mIdx, 1);
+            renderPhoneMessages();
+        }
+
+        // ====== 2. إدارة الألغاز وحلولها ======
+        function renderPuzzles() {
+            const container = document.getElementById("adm-puzzles-container");
+            container.innerHTML = "";
+            const puzzles = casesData[selectedIdx].puzzles || [];
+
+            puzzles.forEach((p, pIdx) => {
+                const hasImg = p.image && p.image.trim() !== "";
+                const div = document.createElement("div");
+                div.className = "admin-item-box";
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <strong>🧩 اللغز رقم #${pIdx + 1}</strong>
+                        <button class="btn btn-danger" style="padding:4px 10px; font-size:0.8rem;" onclick="removePuzzle(${pIdx})">🗑️ حذف اللغز</button>
+                    </div>
+                    <label class="label-title">عنوان اللغز:</label>
+                    <input type="text" class="input-field" value="${escapeHtml(p.title)}" oninput="casesData[selectedIdx].puzzles[${pIdx}].title = this.value">
+
+                    <label class="label-title">تلميح مختصر يظهر على البطاقة:</label>
+                    <input type="text" class="input-field" value="${escapeHtml(p.hint || '')}" oninput="casesData[selectedIdx].puzzles[${pIdx}].hint = this.value">
+
+                    <label class="label-title">نص الحل الكامل:</label>
+                    <textarea class="input-field" rows="4" oninput="casesData[selectedIdx].puzzles[${pIdx}].solution = this.value">${escapeHtml(p.solution || '')}</textarea>
+
+                    <div class="image-upload-zone">
+                        <label class="label-title">🖼️ صورة حل اللغز (اختياري):</label>
+                        <input type="text" class="input-field" value="${escapeHtml(p.image || '')}" placeholder="رابط الصورة أو اختر صورة من جهازك..." oninput="casesData[selectedIdx].puzzles[${pIdx}].image = this.value; renderPuzzles();">
+                        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                            <label class="btn btn-outline" style="cursor:pointer; padding:6px 12px; font-size:0.82rem;">
+                                📷 اختيار صورة من جهازك
+                                <input type="file" accept="image/*" style="display:none;" onchange="uploadPuzzleImage(this, ${pIdx})">
+                            </label>
+                            ${hasImg ? `<button type="button" class="btn btn-danger" style="padding:6px 12px; font-size:0.82rem;" onclick="casesData[selectedIdx].puzzles[${pIdx}].image=''; renderPuzzles();">🗑️ إزالة الصورة</button>` : ''}
+                        </div>
+                        ${hasImg ? `<img src="${escapeHtml(p.image)}" class="img-preview-mini" alt="معاينة">` : ''}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function uploadPuzzleImage(inputEl, pIdx) {
+            const file = inputEl.files[0];
+            if (!file) return;
+            compressAndReadImage(file, (dataUrl) => {
+                casesData[selectedIdx].puzzles[pIdx].image = dataUrl;
+                renderPuzzles();
+                showStatus("✅ تم إرفاق صورة حل اللغز بنجاح!");
+            });
+        }
+
+        function addPuzzle() {
+            casesData[selectedIdx].puzzles.push({
+                title: "عنوان اللغز الجديد",
+                hint: "تلميح مختصر يظهر للاعب",
+                solution: "اكتب الحل التفصيلي هنا...",
+                image: ""
+            });
+            renderPuzzles();
+        }
+
+        function removePuzzle(pIdx) {
+            casesData[selectedIdx].puzzles.splice(pIdx, 1);
+            renderPuzzles();
+        }
+
+        // ====== 3. إدارة أسئلة المهمة الأولى والمهمة الثانية ======
+        function renderTaskQuestions(listKey, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = "";
+            const questions = casesData[selectedIdx][listKey] || [];
+
+            questions.forEach((q, qIdx) => {
+                const isText = q.type === "text";
+                const div = document.createElement("div");
+                div.className = "admin-item-box";
+
+                let detailsHtml = "";
+                if (isText) {
+                    detailsHtml = `
+                        <div style="background:#fffbeb; border:1px solid #fde68a; padding:14px; border-radius:8px;">
+                            <label class="label-title">آلية التحقق من إجابة اللاعب الكتابية:</label>
+                            <select class="input-field" onchange="casesData[selectedIdx]['${listKey}'][${qIdx}].validationMode = this.value; renderTaskQuestions('${listKey}', '${containerId}');">
+                                <option value="keywords" ${q.validationMode !== 'any' ? 'selected' : ''}>مطابقة كلمات مفتاحية (يقبل الجواب إذا تضمن إحدى الكلمات الصحيحة)</option>
+                                <option value="any" ${q.validationMode === 'any' ? 'selected' : ''}>سؤال مفتوح (يقبل أي إجابة يكتبها اللاعب)</option>
+                            </select>
+                            <div class="${q.validationMode === 'any' ? 'hidden' : ''}">
+                                <label class="label-title">الكلمات المفتاحية المقبولة (افصل بينها بفاصلة , ):</label>
+                                <input type="text" class="input-field" style="margin-bottom:0;" value="${escapeHtml(q.acceptedAnswers || '')}" placeholder="مثال: تيم, الأيهمي, 4829" oninput="casesData[selectedIdx]['${listKey}'][${qIdx}].acceptedAnswers = this.value">
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    const opts = (q.options || []).map((opt, oIdx) => `
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                            <input type="radio" name="correct-${listKey}-${qIdx}" ${parseInt(q.correctIndex, 10) === oIdx ? 'checked' : ''} onchange="casesData[selectedIdx]['${listKey}'][${qIdx}].correctIndex = ${oIdx}" title="حدد كإجابة صحيحة">
+                            <input type="text" class="input-field" style="margin-bottom:0; flex:1;" value="${escapeHtml(opt)}" oninput="casesData[selectedIdx]['${listKey}'][${qIdx}].options[${oIdx}] = this.value">
+                            <button class="btn btn-danger" style="padding:5px 10px;" onclick="removeTaskOption('${listKey}', '${containerId}', ${qIdx}, ${oIdx})" title="حذف الخيار">✕</button>
+                        </div>
+                    `).join("");
+
+                    detailsHtml = `
+                        <div style="background:#e2e8f0; padding:14px; border-radius:8px;">
+                            <label class="label-title">الخيارات المتاحة (ضع النقطة 🔘 بجانب الجواب الصحيح):</label>
+                            ${opts}
+                            <button class="btn btn-outline" style="padding:6px 12px; font-size:0.82rem; margin-top:4px;" onclick="addTaskOption('${listKey}', '${containerId}', ${qIdx})">+ إضافة خيار جديد</button>
+                        </div>
+                    `;
+                }
+
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <strong>❓ السؤال رقم #${qIdx + 1}</strong>
+                        <button class="btn btn-danger" style="padding:4px 10px; font-size:0.8rem;" onclick="removeTaskQuestion('${listKey}', '${containerId}', ${qIdx})">🗑️ حذف السؤال</button>
+                    </div>
+                    <label class="label-title">نوع السؤال:</label>
+                    <select class="input-field" onchange="changeTaskQType('${listKey}', '${containerId}', ${qIdx}, this.value)">
+                        <option value="mcq" ${!isText ? 'selected' : ''}>🔘 اختيار من متعدد (MCQ)</option>
+                        <option value="text" ${isText ? 'selected' : ''}>✍️ إجابة كتابية يكتبها اللاعب</option>
+                    </select>
+                    <label class="label-title">نص السؤال:</label>
+                    <input type="text" class="input-field" value="${escapeHtml(q.question)}" oninput="casesData[selectedIdx]['${listKey}'][${qIdx}].question = this.value">
+                    ${detailsHtml}
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function changeTaskQType(listKey, containerId, qIdx, type) {
+            const q = casesData[selectedIdx][listKey][qIdx];
+            q.type = type;
+            if (type === "mcq" && (!q.options || q.options.length < 2)) {
+                q.options = ["الخيار الأول", "الخيار الثاني", "الخيار الثالث"];
+                q.correctIndex = 0;
+            }
+            renderTaskQuestions(listKey, containerId);
+        }
+
+        function addTaskOption(listKey, containerId, qIdx) {
+            casesData[selectedIdx][listKey][qIdx].options.push("خيار جديد");
+            renderTaskQuestions(listKey, containerId);
+        }
+
+        function removeTaskOption(listKey, containerId, qIdx, oIdx) {
+            const q = casesData[selectedIdx][listKey][qIdx];
+            if (q.options.length <= 2) return alert("يجب إبقاء خيارين على الأقل.");
+            q.options.splice(oIdx, 1);
+            if (q.correctIndex >= q.options.length) q.correctIndex = 0;
+            renderTaskQuestions(listKey, containerId);
+        }
+
+        function addTaskQuestion(listKey) {
+            const containerId = listKey === 'task1Questions' ? 'adm-task1-questions-container' : 'adm-task2-questions-container';
+            casesData[selectedIdx][listKey].push({
+                type: "mcq",
+                question: "اكتب نص السؤال الجديد هنا؟",
+                options: ["الخيار الأول", "الخيار الثاني", "الخيار الثالث", "الخيار الرابع"],
+                correctIndex: 0
+            });
+            renderTaskQuestions(listKey, containerId);
+        }
+
+        function removeTaskQuestion(listKey, containerId, qIdx) {
+            casesData[selectedIdx][listKey].splice(qIdx, 1);
+            renderTaskQuestions(listKey, containerId);
+        }
+
+        // ====== 4. إدارة صور الوثائق (الشريك / التقرير / المحكمة) ======
+        function handleDocImageUpload(inputEl, targetType) {
+            const file = inputEl.files[0];
+            if (!file) return;
+            compressAndReadImage(file, (dataUrl) => {
+                const inputId = targetType === 'partner' ? 'adm-partner-img' : (targetType === 'report' ? 'adm-report-img' : 'adm-verdict-img');
+                document.getElementById(inputId).value = dataUrl;
+                updateImagePreview(targetType);
+                showStatus("✅ تم إرفاق الصورة بنجاح!");
+            });
+        }
+
+        function updateImagePreview(targetType) {
+            const inputId = targetType === 'partner' ? 'adm-partner-img' : (targetType === 'report' ? 'adm-report-img' : 'adm-verdict-img');
+            const previewId = targetType === 'partner' ? 'preview-partner-img' : (targetType === 'report' ? 'preview-report-img' : 'preview-verdict-img');
+            const val = document.getElementById(inputId).value.trim();
+            const imgEl = document.getElementById(previewId);
+            if (val) {
+                imgEl.src = val;
+                imgEl.classList.remove("hidden");
+            } else {
+                imgEl.src = "";
+                imgEl.classList.add("hidden");
+            }
+        }
+
+        function clearDocImage(targetType) {
+            const inputId = targetType === 'partner' ? 'adm-partner-img' : (targetType === 'report' ? 'adm-report-img' : 'adm-verdict-img');
+            document.getElementById(inputId).value = "";
+            updateImagePreview(targetType);
+        }
+
+        // ====== 5. الحفظ والتصدير والنشر ======
         function syncFormToMemory(showMsg) {
-            const c = casesData[0];
+            const c = casesData[selectedIdx];
             if (!c) return;
+
             c.title = document.getElementById("adm-title").value.trim();
             c.code = document.getElementById("adm-code").value.trim();
             c.desc = document.getElementById("adm-desc").value.trim();
-            c.casePassword = document.getElementById("adm-pass").value.trim();
-            c.phonePasscode = document.getElementById("adm-phone-code").value.trim();
+            c.casePassword = document.getElementById("adm-pass").value.trim() || "511";
+
+            c.phonePasscode = document.getElementById("adm-phone-code").value.trim() || "250401";
+            c.phoneHint = document.getElementById("adm-phone-hint").value.trim();
             c.phoneNoteTitle = document.getElementById("adm-note-title").value.trim();
             c.phoneNoteText = document.getElementById("adm-note-text").value.trim();
+
             c.partnerMessage = document.getElementById("adm-partner-msg").value;
+            c.partnerMessageImage = document.getElementById("adm-partner-img").value.trim();
             c.poirotReport = document.getElementById("adm-report").value;
+            c.poirotReportImage = document.getElementById("adm-report-img").value.trim();
             c.courtVerdict = document.getElementById("adm-verdict").value;
+            c.courtVerdictImage = document.getElementById("adm-verdict-img").value.trim();
+            c.updatedAt = Date.now();
+
             localStorage.setItem(STORAGE_KEY, JSON.stringify(casesData));
+            localStorage.setItem(OVERRIDE_KEY, "true");
+            populateCaseSelector();
+
             if (showMsg) {
-                const el = document.getElementById("status-notice");
-                el.textContent = "✅ تم حفظ التعديلات بنجاح!";
-                el.classList.remove("hidden");
-                setTimeout(() => el.classList.add("hidden"), 4000);
+                showStatus("✅ تم حفظ جميع التعديلات! افتح صفحة اللاعبين (index.html) لمعاينتها فوراً.");
             }
         }
 
         function downloadCasesJson() {
             syncFormToMemory(false);
-            const blob = new Blob([JSON.stringify(casesData, null, 2)], { type: "application/json;charset=utf-8" });
+            const dataStr = JSON.stringify(casesData, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
+            a.href = url;
             a.download = "cases.json";
+            document.body.appendChild(a);
             a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showStatus("⬇️ تم تنزيل ملف cases.json بنجاح! ارفعه إلى GitHub لتحديث الموقع لجميع اللاعبين.");
+        }
+
+        async function publishDirectlyToGitHub() {
+            syncFormToMemory(false);
+            const repo = document.getElementById("gh-repo").value.trim();
+            const branch = document.getElementById("gh-branch").value.trim() || "main";
+            const token = document.getElementById("gh-token").value.trim();
+
+            if (!repo || !token) {
+                return alert("يرجى إدخال اسم المستودع (Owner/Repo) ومفتاح GitHub Token أولاً.");
+            }
+
+            localStorage.setItem("poirot_gh_repo", repo);
+            localStorage.setItem("poirot_gh_token", token);
+
+            try {
+                showStatus("⏳ جاري الاتصال بـ GitHub وتحديث ملف cases.json...");
+                const apiUrl = `https://api.github.com/repos/${repo}/contents/cases.json`;
+
+                let sha = null;
+                const getRes = await fetch(apiUrl + `?ref=${branch}`, {
+                    headers: { "Authorization": `token ${token}` }
+                });
+                if (getRes.ok) {
+                    const fileInfo = await getRes.json();
+                    sha = fileInfo.sha;
+                }
+
+                const contentBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(casesData, null, 2))));
+                const putRes = await fetch(apiUrl, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `token ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        message: "Update cases.json from Poirot Admin Dashboard",
+                        content: contentBase64,
+                        branch: branch,
+                        ...(sha ? { sha } : {})
+                    })
+                });
+
+                if (putRes.ok) {
+                    localStorage.removeItem(OVERRIDE_KEY);
+                    showStatus("🎉 تم نشر التعديلات وتحديث ملف cases.json مباشرة على GitHub بنجاح!");
+                } else {
+                    alert("تعذر التحديث المباشر، تأكد من صلاحيات الـ Token واسم المستودع.");
+                }
+            } catch (err) {
+                alert("حدث خطأ أثناء الاتصال بـ GitHub: " + err.message);
+            }
+        }
+
+        function createNewCase() {
+            syncFormToMemory(false);
+            casesData.push({
+                id: "case_" + Date.now(),
+                code: `ملف القضية رقم #0${casesData.length + 1}`,
+                title: "قضية جنائية جديدة",
+                desc: "اكتب الملخص التشويقي للقضية هنا...",
+                casePassword: "511",
+                phonePasscode: "250401",
+                phoneHint: "تلميح القفل: أدخل الرمز المكون من 6 أرقام",
+                phoneMessages: [
+                    { time: "02:00 ظهراً", direction: "واردة ↙", contact: "مشتبه به", text: "نص الرسالة..." }
+                ],
+                phoneNoteTitle: "مذكرة شخصية",
+                phoneNoteText: "نص المذكرة...",
+                puzzles: [
+                    { title: "اللغز الأول", hint: "اضغط لعرض الحل", solution: "تفاصيل الحل...", image: "" }
+                ],
+                task1Questions: [
+                    { type: "mcq", question: "سؤال المهمة الأولى؟", options: ["الخيار 1", "الخيار 2"], correctIndex: 0 }
+                ],
+                partnerMessage: "رسالة شريك المحقق لفتح المظروف الثاني...",
+                partnerMessageImage: "",
+                task2Questions: [
+                    { type: "mcq", question: "سؤال المهمة الثانية؟", options: ["الخيار 1", "الخيار 2"], correctIndex: 0 }
+                ],
+                poirotReport: "الخط الزمني الكامل...",
+                poirotReportImage: "",
+                courtVerdict: "قرار المحكمة النهائي...",
+                courtVerdictImage: "",
+                updatedAt: Date.now()
+            });
+            selectedIdx = casesData.length - 1;
+            populateCaseSelector();
+            loadSelectedCase();
+            syncFormToMemory(true);
+        }
+
+        function deleteCurrentCase() {
+            if (casesData.length <= 1) return alert("يجب إبقاء قضية واحدة على الأقل.");
+            if (confirm("هل أنت متأكد من حذف هذه القضية بالكامل؟")) {
+                casesData.splice(selectedIdx, 1);
+                selectedIdx = 0;
+                populateCaseSelector();
+                loadSelectedCase();
+                syncFormToMemory(true);
+            }
         }
 
         function generateQR() {
+            const url = document.getElementById("qr-link-input").value.trim();
             const box = document.getElementById("qr-container");
             box.innerHTML = "";
-            new QRCode(box, { text: document.getElementById("qr-link-input").value.trim(), width: 200, height: 200 });
+            new QRCode(box, {
+                text: url,
+                width: 200,
+                height: 200,
+                colorDark: "#0a1628",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        function downloadQRImage() {
+            const img = document.querySelector("#qr-container img") || document.querySelector("#qr-container canvas");
+            if (!img) return alert("يرجى توليد الباركود أولاً.");
+            const src = img.src || img.toDataURL("image/png");
+            const a = document.createElement("a");
+            a.href = src;
+            a.download = "poirot-qrcode.png";
+            a.click();
+        }
+
+        function showStatus(msg) {
+            const el = document.getElementById("status-notice");
+            el.textContent = msg;
+            el.classList.remove("hidden");
+            setTimeout(() => el.classList.add("hidden"), 5000);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return "";
+            return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
         }
     </script>
 </body>
