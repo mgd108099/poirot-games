@@ -132,7 +132,6 @@
         .card-box h3 { color: var(--navy-dark); font-size: 1.3rem; margin-bottom: 8px; }
         .card-box p { color: var(--text-muted); font-size: 0.94rem; line-height: 1.75; }
 
-        /* شبكة الأيقونات الأربع داخل القضية */
         .quad-boxes {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -261,7 +260,6 @@
 
         .verdict-content { white-space: pre-line; line-height: 1.9; font-size: 1.02rem; color: #1e293b; }
 
-        /* واجهة هاتف الضحية (iPhone UI) */
         .iphone-frame {
             max-width: 480px;
             margin: 0 auto;
@@ -422,7 +420,7 @@
                     <div class="big-option-box" onclick="openVictimPhoneGate()">
                         <span class="big-option-icon">📱</span>
                         <h3>هاتف الضحية (iPhone 15 Pro)</h3>
-                        <p>أدخل رمز القفل (6 أرقام) لفك تشفير الهاتف واستخراج الرسائل والمذكرات</p>
+                        <p>أدخل رمز القفل لفك تشفير الهاتف واستخراج الرسائل والمذكرات</p>
                     </div>
 
                     <div class="big-option-box gold-border" onclick="openTask1View()">
@@ -467,23 +465,17 @@
         <div id="view-victim-phone" class="hidden">
             <button class="btn btn-back" onclick="backToCaseHub()">← العودة لأقسام القضية</button>
 
-            <!-- شاشة قفل الآيفون -->
             <div id="phone-lock-screen" class="panel-card pass-box">
                 <span style="font-size: 3rem;">📱</span>
                 <h3 style="color: var(--navy-dark); margin: 8px 0;">هاتف الضحية (iPhone 15 Pro)</h3>
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 14px;">
-                    تلميح القفل: <b>(يوم العرض) + (رقم القاعة) + (رقم المقعد)</b> من اليسار إلى اليمين:
-                </p>
-                <input type="text" id="input-phone-code" maxlength="6" dir="ltr" class="input-field" placeholder="_ _ - _ _ - _ _" style="text-align: center; font-size: 1.35rem; letter-spacing: 6px; font-weight: 800;" onkeydown="if(event.key==='Enter') verifyPhoneCode()">
-                <div id="phone-code-error" class="alert-msg alert-error hidden">❌ رمز القفل غير صحيح! راجع البوستر والتذكرة ومخطط طاولة العشاء.</div>
+                <p id="phone-hint-label" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 14px;"></p>
+                <input type="text" id="input-phone-code" dir="ltr" class="input-field" placeholder="_ _ - _ _ - _ _" style="text-align: center; font-size: 1.35rem; letter-spacing: 5px; font-weight: 800;" onkeydown="if(event.key==='Enter') verifyPhoneCode()">
+                <div id="phone-code-error" class="alert-msg alert-error hidden">❌ رمز القفل غير صحيح! راجع الأدلة وحاول مجدداً.</div>
                 <button class="btn btn-gold" style="width: 100%;" onclick="verifyPhoneCode()">🔓 فتح قفل الهاتف</button>
             </div>
 
-            <!-- شاشة محتويات الهاتف بعد الفتح -->
             <div id="phone-unlocked-screen" class="hidden">
-                <div class="alert-msg alert-success" style="max-width: 480px; margin: 0 auto 18px;">
-                    ✅ تم فك تشفير الهاتف بنجاح (الرمز: 250401)
-                </div>
+                <div id="phone-unlocked-banner" class="alert-msg alert-success" style="max-width: 480px; margin: 0 auto 18px;"></div>
                 <div class="iphone-frame">
                     <div class="iphone-notch"></div>
                     <h4 style="text-align: center; color: var(--gold-light); margin-bottom: 14px; border-bottom: 1px solid #334155; padding-bottom: 8px;">
@@ -491,9 +483,9 @@
                     </h4>
                     <div id="phone-messages-list"></div>
 
-                    <div class="apple-note-card">
+                    <div id="phone-note-wrapper" class="apple-note-card">
                         <div style="font-weight: 800; font-size: 0.95rem; color: #854d0e; margin-bottom: 6px;" id="phone-note-title"></div>
-                        <div style="font-size: 0.92rem; line-height: 1.7; font-weight: 600;" id="phone-note-body"></div>
+                        <div style="font-size: 0.92rem; line-height: 1.7; font-weight: 600; white-space: pre-line;" id="phone-note-body"></div>
                     </div>
                 </div>
             </div>
@@ -505,18 +497,17 @@
             <div class="panel-card">
                 <div class="section-header" style="margin-bottom: 20px;">
                     <h2>🕵️‍♂️ حل المهمة الأولى (المرحلة الأولى)</h2>
-                    <p>أجب عن الأسئلة الثلاثة التالية للإيقاع بالجاني المنفّذ وفتح المظروف السري الثاني</p>
+                    <p>أجب عن الأسئلة التالية للإيقاع بالجاني المنفّذ وفتح المظروف السري الثاني</p>
                 </div>
 
                 <div id="task1-questions-container"></div>
                 <div id="task1-error-box" class="alert-msg alert-error hidden"></div>
 
-                <button class="btn btn-gold" style="width: 100%; padding: 14px; font-size: 1.05rem; margin-top: 10px;" onclick="verifyTask1Answers()">
+                <button class="btn btn-gold" style="width: 100%; padding: 14px; font-size: 1.05rem; margin-top: 10px;" onclick="verifyTaskAnswers('task1Questions', 't1', 'task1-error-box', showPartnerMessage)">
                     ✔️ تحقق من إجابات المهمة الأولى
                 </button>
             </div>
 
-            <!-- رسالة شريك المحقق -->
             <div id="view-partner-msg" class="hidden">
                 <div class="official-doc" style="border-color: var(--navy-main);">
                     <div class="official-doc-header">
@@ -524,6 +515,9 @@
                         <span class="stamp-badge">افتح المظروف السري الثاني</span>
                     </div>
                     <div id="partner-msg-content" class="verdict-content"></div>
+                    <div id="partner-img-box" class="evidence-image-box hidden">
+                        <img id="partner-img" src="" alt="مرفق رسالة الشريك" onclick="openLightbox(this.src)">
+                    </div>
                 </div>
             </div>
         </div>
@@ -540,12 +534,11 @@
                 <div id="task2-questions-container"></div>
                 <div id="task2-error-box" class="alert-msg alert-error hidden"></div>
 
-                <button class="btn btn-gold" style="width: 100%; padding: 14px; font-size: 1.05rem; margin-top: 10px;" onclick="verifyTask2Answers()">
+                <button class="btn btn-gold" style="width: 100%; padding: 14px; font-size: 1.05rem; margin-top: 10px;" onclick="verifyTaskAnswers('task2Questions', 't2', 'task2-error-box', showFinalVerdictDocs)">
                     ✔️ تحقق من الإجابات وافتح قرار المحكمة النهائي
                 </button>
             </div>
 
-            <!-- أوراق الحل النهائي وحكم المحكمة -->
             <div id="view-verdict-docs" class="hidden">
                 <div class="alert-msg alert-success" style="margin-top: 25px; font-size: 1.1rem;">
                     🎉 أحسنت أيها المحقق! لقد كشفت الخطة الكاملة وقدمت الجناة للعدالة. إليك الوثائق الختامية:
@@ -587,10 +580,26 @@
 
     <script>
         const STORAGE_KEY = "poirot_detective_cases_v3";
+        const OVERRIDE_KEY = "poirot_local_override_v3";
         let casesData = [];
         let activeCaseIndex = 0;
 
         async function loadCasesFromJson() {
+            const hasLocalOverride = localStorage.getItem(OVERRIDE_KEY) === "true";
+            const localSaved = localStorage.getItem(STORAGE_KEY);
+
+            // إذا قام المدير بحفظ تعديلات فورية على نفس المتصفح، نعرضها فوراً
+            if (hasLocalOverride && localSaved) {
+                try {
+                    casesData = JSON.parse(localSaved);
+                    if (casesData && casesData.length > 0) {
+                        showPlayerHome();
+                        return;
+                    }
+                } catch (e) {}
+            }
+
+            // غير ذلك، نحمّل ملف cases.json من السيرفر
             try {
                 const response = await fetch('./cases.json?t=' + Date.now());
                 if (response.ok) {
@@ -602,7 +611,6 @@
                 console.warn("جاري استخدام النسخة المحفوظة محلياً...");
             }
 
-            const localSaved = localStorage.getItem(STORAGE_KEY);
             if (localSaved) {
                 casesData = JSON.parse(localSaved);
             }
@@ -636,7 +644,6 @@
             });
         }
 
-        // خطوة كلمة المرور فور الضغط على القضية
         function promptCasePassword(idx) {
             activeCaseIndex = idx;
             const c = casesData[activeCaseIndex];
@@ -724,6 +731,8 @@
         // 2. قسم هاتف الضحية
         function openVictimPhoneGate() {
             hideAllViews();
+            const c = casesData[activeCaseIndex];
+            document.getElementById("phone-hint-label").textContent = c.phoneHint || "تلميح القفل: (يوم العرض) + (رقم القاعة) + (رقم المقعد) من اليسار إلى اليمين:";
             document.getElementById("input-phone-code").value = "";
             document.getElementById("phone-code-error").classList.add("hidden");
             document.getElementById("phone-lock-screen").classList.remove("hidden");
@@ -735,10 +744,11 @@
         function verifyPhoneCode() {
             const entered = document.getElementById("input-phone-code").value.replace(/\s|-/g, "").trim();
             const c = casesData[activeCaseIndex];
-            const correctCode = String(c.phonePasscode || "250401").trim();
+            const correctCode = String(c.phonePasscode || "250401").replace(/\s|-/g, "").trim();
 
             if (entered === correctCode) {
                 document.getElementById("phone-lock-screen").classList.add("hidden");
+                document.getElementById("phone-unlocked-banner").textContent = `✅ تم فك تشفير الهاتف بنجاح (الرمز: ${correctCode})`;
                 renderPhoneContents(c);
                 document.getElementById("phone-unlocked-screen").classList.remove("hidden");
             } else {
@@ -763,108 +773,146 @@
                 list.appendChild(div);
             });
 
-            document.getElementById("phone-note-title").textContent = "📝 " + (c.phoneNoteTitle || "مذكرة شخصية");
-            document.getElementById("phone-note-body").textContent = c.phoneNoteText || "";
+            const noteWrapper = document.getElementById("phone-note-wrapper");
+            if ((c.phoneNoteTitle && c.phoneNoteTitle.trim() !== "") || (c.phoneNoteText && c.phoneNoteText.trim() !== "")) {
+                document.getElementById("phone-note-title").textContent = "📝 " + (c.phoneNoteTitle || "مذكرة شخصية");
+                document.getElementById("phone-note-body").textContent = c.phoneNoteText || "";
+                noteWrapper.classList.remove("hidden");
+            } else {
+                noteWrapper.classList.add("hidden");
+            }
         }
 
-        // 3. قسم المهمة الأولى
+        // 3 & 4. بناء أسئلة المهمتين الأولى والثانية والتحقق منها
+        function renderPlayerQuestions(questions, prefix, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = "";
+            (questions || []).forEach((q, qIdx) => {
+                const card = document.createElement("div");
+                card.className = "question-card";
+                let inputHtml = "";
+                if (q.type === "text") {
+                    inputHtml = `<input type="text" id="${prefix}-text-${qIdx}" class="input-field" style="margin-bottom:0; background:#fff;" placeholder="اكتب إجابتك هنا...">`;
+                } else {
+                    inputHtml = (q.options || []).map((opt, oIdx) => `
+                        <label class="mcq-option">
+                            <input type="radio" name="${prefix}-q-${qIdx}" value="${oIdx}">
+                            <span>${escapeHtml(opt)}</span>
+                        </label>
+                    `).join("");
+                }
+                card.innerHTML = `<h4>${escapeHtml(q.question)}</h4>${inputHtml}`;
+                container.appendChild(card);
+            });
+        }
+
         function openTask1View() {
             hideAllViews();
             const c = casesData[activeCaseIndex];
-            const container = document.getElementById("task1-questions-container");
-            container.innerHTML = "";
             document.getElementById("task1-error-box").classList.add("hidden");
             document.getElementById("view-partner-msg").classList.add("hidden");
-
-            (c.task1Questions || []).forEach((q, qIdx) => {
-                const card = document.createElement("div");
-                card.className = "question-card";
-                const optsHtml = (q.options || []).map((opt, oIdx) => `
-                    <label class="mcq-option">
-                        <input type="radio" name="t1-q-${qIdx}" value="${oIdx}">
-                        <span>${escapeHtml(opt)}</span>
-                    </label>
-                `).join("");
-                card.innerHTML = `<h4>${escapeHtml(q.question)}</h4>${optsHtml}`;
-                container.appendChild(card);
-            });
-
+            renderPlayerQuestions(c.task1Questions, 't1', 'task1-questions-container');
             document.getElementById("view-task1").classList.remove("hidden");
         }
 
-        function verifyTask1Answers() {
+        function openTask2View() {
+            hideAllViews();
             const c = casesData[activeCaseIndex];
-            const questions = c.task1Questions || [];
-            const errorBox = document.getElementById("task1-error-box");
+            document.getElementById("task2-error-box").classList.add("hidden");
+            document.getElementById("view-verdict-docs").classList.add("hidden");
+            renderPlayerQuestions(c.task2Questions, 't2', 'task2-questions-container');
+            document.getElementById("view-task2").classList.remove("hidden");
+        }
+
+        function normalizeArabicText(str) {
+            if (!str) return "";
+            return str.toString().trim().toLowerCase()
+                .replace(/[أإآ]/g, "ا")
+                .replace(/ة/g, "ه")
+                .replace(/ى/g, "ي")
+                .replace(/[\u064B-\u065F]/g, "")
+                .replace(/\s+/g, " ");
+        }
+
+        function verifyTaskAnswers(listKey, prefix, errorBoxId, onSuccessCallback) {
+            const c = casesData[activeCaseIndex];
+            const questions = c[listKey] || [];
+            const errorBox = document.getElementById(errorBoxId);
             errorBox.classList.add("hidden");
 
             for (let i = 0; i < questions.length; i++) {
-                const selected = document.querySelector(`input[name="t1-q-${i}"]:checked`);
-                if (!selected) {
-                    errorBox.textContent = `⚠️ يرجى اختيار إجابة للسؤال رقم (${i + 1}) قبل المتابعة.`;
-                    errorBox.classList.remove("hidden");
-                    return;
-                }
-                if (parseInt(selected.value, 10) !== parseInt(questions[i].correctIndex, 10)) {
-                    errorBox.textContent = `❌ الإجابة في السؤال رقم (${i + 1}) غير صحيحة! راجع أدلة المرحلة الأولى جيداً.`;
-                    errorBox.classList.remove("hidden");
-                    return;
+                const q = questions[i];
+                if (q.type === "text") {
+                    const textInput = document.getElementById(`${prefix}-text-${i}`);
+                    const rawVal = textInput ? textInput.value.trim() : "";
+                    if (!rawVal) {
+                        errorBox.textContent = `⚠️ يرجى كتابة الإجابة في السؤال رقم (${i + 1}) قبل المتابعة.`;
+                        errorBox.classList.remove("hidden");
+                        return;
+                    }
+                    if (q.validationMode !== "any") {
+                        const normalizedPlayer = normalizeArabicText(rawVal);
+                        const keywords = (q.acceptedAnswers || "").split(",").map(k => normalizeArabicText(k)).filter(Boolean);
+                        const isMatch = keywords.some(kw => normalizedPlayer.includes(kw));
+                        if (!isMatch && keywords.length > 0) {
+                            errorBox.textContent = `❌ الإجابة المكتوبة في السؤال رقم (${i + 1}) غير دقيقة! راجع الأدلة وحاول مجدداً.`;
+                            errorBox.classList.remove("hidden");
+                            return;
+                        }
+                    }
+                } else {
+                    const selected = document.querySelector(`input[name="${prefix}-q-${i}"]:checked`);
+                    if (!selected) {
+                        errorBox.textContent = `⚠️ يرجى اختيار إجابة للسؤال رقم (${i + 1}) قبل المتابعة.`;
+                        errorBox.classList.remove("hidden");
+                        return;
+                    }
+                    if (parseInt(selected.value, 10) !== parseInt(q.correctIndex, 10)) {
+                        errorBox.textContent = `❌ الإجابة في السؤال رقم (${i + 1}) غير صحيحة! راجع الأدلة جيداً.`;
+                        errorBox.classList.remove("hidden");
+                        return;
+                    }
                 }
             }
 
+            onSuccessCallback(c);
+        }
+
+        function showPartnerMessage(c) {
             document.getElementById("partner-msg-content").textContent = c.partnerMessage || "";
+            const imgBox = document.getElementById("partner-img-box");
+            const imgEl = document.getElementById("partner-img");
+            if (c.partnerMessageImage && c.partnerMessageImage.trim() !== "") {
+                imgEl.src = c.partnerMessageImage;
+                imgBox.classList.remove("hidden");
+            } else {
+                imgBox.classList.add("hidden");
+            }
             const partnerBox = document.getElementById("view-partner-msg");
             partnerBox.classList.remove("hidden");
             partnerBox.scrollIntoView({ behavior: "smooth" });
         }
 
-        // 4. قسم المهمة الثانية
-        function openTask2View() {
-            hideAllViews();
-            const c = casesData[activeCaseIndex];
-            const container = document.getElementById("task2-questions-container");
-            container.innerHTML = "";
-            document.getElementById("task2-error-box").classList.add("hidden");
-            document.getElementById("view-verdict-docs").classList.add("hidden");
-
-            (c.task2Questions || []).forEach((q, qIdx) => {
-                const card = document.createElement("div");
-                card.className = "question-card";
-                const optsHtml = (q.options || []).map((opt, oIdx) => `
-                    <label class="mcq-option">
-                        <input type="radio" name="t2-q-${qIdx}" value="${oIdx}">
-                        <span>${escapeHtml(opt)}</span>
-                    </label>
-                `).join("");
-                card.innerHTML = `<h4>${escapeHtml(q.question)}</h4>${optsHtml}`;
-                container.appendChild(card);
-            });
-
-            document.getElementById("view-task2").classList.remove("hidden");
-        }
-
-        function verifyTask2Answers() {
-            const c = casesData[activeCaseIndex];
-            const questions = c.task2Questions || [];
-            const errorBox = document.getElementById("task2-error-box");
-            errorBox.classList.add("hidden");
-
-            for (let i = 0; i < questions.length; i++) {
-                const selected = document.querySelector(`input[name="t2-q-${i}"]:checked`);
-                if (!selected) {
-                    errorBox.textContent = `⚠️ يرجى اختيار إجابة للسؤال رقم (${i + 1}) قبل المتابعة.`;
-                    errorBox.classList.remove("hidden");
-                    return;
-                }
-                if (parseInt(selected.value, 10) !== parseInt(questions[i].correctIndex, 10)) {
-                    errorBox.textContent = `❌ الإجابة في السؤال رقم (${i + 1}) غير صحيحة! دقق في أدلة المظروف الثاني.`;
-                    errorBox.classList.remove("hidden");
-                    return;
-                }
+        function showFinalVerdictDocs(c) {
+            document.getElementById("doc-poirot-report").textContent = c.poirotReport || "";
+            const repImgBox = document.getElementById("doc-poirot-img-box");
+            const repImg = document.getElementById("doc-poirot-img");
+            if (c.poirotReportImage && c.poirotReportImage.trim() !== "") {
+                repImg.src = c.poirotReportImage;
+                repImgBox.classList.remove("hidden");
+            } else {
+                repImgBox.classList.add("hidden");
             }
 
-            document.getElementById("doc-poirot-report").textContent = c.poirotReport || "";
             document.getElementById("doc-court-verdict").textContent = c.courtVerdict || "";
+            const courtImgBox = document.getElementById("doc-court-img-box");
+            const courtImg = document.getElementById("doc-court-img");
+            if (c.courtVerdictImage && c.courtVerdictImage.trim() !== "") {
+                courtImg.src = c.courtVerdictImage;
+                courtImgBox.classList.remove("hidden");
+            } else {
+                courtImgBox.classList.add("hidden");
+            }
 
             const verdictDocs = document.getElementById("view-verdict-docs");
             verdictDocs.classList.remove("hidden");
