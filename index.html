@@ -271,23 +271,86 @@
 
         .verdict-content { white-space: pre-line; line-height: 1.9; font-size: 1.02rem; color: #1e293b; }
 
+        /* واجهة هاتف الضحية التفاعلية مع أسهم التقليب */
         .iphone-frame {
             max-width: 480px;
             margin: 0 auto;
             background: #0f172a;
             border: 6px solid #334155;
             border-radius: 32px;
-            padding: 22px 18px;
+            padding: 20px 18px;
             color: #fff;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.28);
+            display: flex;
+            flex-direction: column;
+            min-height: 500px;
         }
         .iphone-notch {
             width: 110px;
-            height: 22px;
+            height: 20px;
             background: #000;
             border-radius: 12px;
-            margin: 0 auto 18px;
+            margin: 0 auto 14px;
         }
+        .iphone-nav-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 8px 10px;
+            margin-bottom: 16px;
+        }
+        .iphone-arrow-btn {
+            background: var(--gold);
+            color: var(--navy-dark);
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s, background 0.2s;
+        }
+        .iphone-arrow-btn:hover {
+            background: var(--gold-light);
+            transform: scale(1.06);
+        }
+        .iphone-app-title {
+            font-weight: 800;
+            font-size: 1rem;
+            color: var(--gold-light);
+            text-align: center;
+        }
+        .iphone-app-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        .iphone-tab-pill {
+            background: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .iphone-tab-pill.active {
+            background: var(--gold);
+            color: var(--navy-dark);
+            border-color: var(--gold);
+        }
+
         .msg-bubble {
             border-radius: 14px;
             padding: 12px 14px;
@@ -316,10 +379,38 @@
         .apple-note-card {
             background: #fef9c3;
             color: #1e293b;
-            border-radius: 12px;
-            padding: 16px;
-            margin-top: 18px;
+            border-radius: 14px;
+            padding: 18px;
             border-top: 6px solid #eab308;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .note-slider-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px dashed #ca8a04;
+        }
+        .note-nav-btn {
+            background: #854d0e;
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.84rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .note-nav-btn:disabled {
+            background: #cbd5e1;
+            color: #64748b;
+            cursor: not-allowed;
         }
 
         .evidence-image-box {
@@ -435,7 +526,7 @@
                     <div class="big-option-box" onclick="openVictimPhoneGate()">
                         <span class="big-option-icon">📱</span>
                         <h3>هاتف الضحية (iPhone 15 Pro)</h3>
-                        <p>أدخل رمز القفل لفك تشفير الهاتف واستخراج الرسائل والمذكرات</p>
+                        <p>أدخل رمز القفل لفك تشفير الهاتف وتصفح الرسائل والملاحظات</p>
                     </div>
 
                     <div class="big-option-box gold-border" onclick="openTask1View()">
@@ -477,7 +568,7 @@
             </div>
         </div>
 
-        <!-- 6. قسم هاتف الضحية (قفل + رسائل) -->
+        <!-- 6. قسم هاتف الضحية (قفل + تقليب بالأسهم بين الرسائل والملاحظات) -->
         <div id="view-victim-phone" class="hidden">
             <button class="btn btn-back" onclick="backToCaseHub()">← العودة لأقسام القضية</button>
 
@@ -491,17 +582,44 @@
             </div>
 
             <div id="phone-unlocked-screen" class="hidden">
-                <div id="phone-unlocked-banner" class="alert-msg alert-success" style="max-width: 480px; margin: 0 auto 18px;"></div>
+                <div id="phone-unlocked-banner" class="alert-msg alert-success" style="max-width: 480px; margin: 0 auto 14px;"></div>
+
                 <div class="iphone-frame">
                     <div class="iphone-notch"></div>
-                    <h4 style="text-align: center; color: var(--gold-light); margin-bottom: 14px; border-bottom: 1px solid #334155; padding-bottom: 8px;">
-                        💬 الرسائل النصية المستخرجة (يوم الحادثة)
-                    </h4>
-                    <div id="phone-messages-list"></div>
 
-                    <div id="phone-note-wrapper" class="apple-note-card">
-                        <div style="font-weight: 800; font-size: 0.95rem; color: #854d0e; margin-bottom: 6px;" id="phone-note-title"></div>
-                        <div style="font-size: 0.92rem; line-height: 1.7; font-weight: 600; white-space: pre-line;" id="phone-note-body"></div>
+                    <!-- شريط الأسهم للتقليب بين الرسائل والملاحظات -->
+                    <div class="iphone-nav-bar">
+                        <button class="iphone-arrow-btn" onclick="togglePhoneAppScreen()" title="تقليب بين الرسائل والملاحظات">▶</button>
+                        <div class="iphone-app-title" id="iphone-current-app-title">💬 الرسائل النصية (SMS)</div>
+                        <button class="iphone-arrow-btn" onclick="togglePhoneAppScreen()" title="تقليب بين الرسائل والملاحظات">◀</button>
+                    </div>
+
+                    <!-- أزرار التبديل السريع -->
+                    <div class="iphone-app-dots">
+                        <button id="pill-messages" class="iphone-tab-pill active" onclick="switchPhoneApp('messages')">💬 الرسائل النصية</button>
+                        <button id="pill-notes" class="iphone-tab-pill" onclick="switchPhoneApp('notes')">📝 الملاحظات</button>
+                    </div>
+
+                    <!-- الشاشة 1: الرسائل النصية -->
+                    <div id="iphone-screen-messages" style="flex: 1;">
+                        <div id="phone-messages-list"></div>
+                    </div>
+
+                    <!-- الشاشة 2: تطبيق الملاحظات (مع أسهم للتقليب بين الملاحظات) -->
+                    <div id="iphone-screen-notes" class="hidden" style="flex: 1;">
+                        <div id="phone-note-wrapper" class="apple-note-card">
+                            <div>
+                                <div style="font-weight: 800; font-size: 1rem; color: #854d0e; margin-bottom: 8px; border-bottom: 1px solid #fde047; padding-bottom: 6px;" id="phone-note-title"></div>
+                                <div style="font-size: 0.94rem; line-height: 1.75; font-weight: 600; white-space: pre-line;" id="phone-note-body"></div>
+                            </div>
+
+                            <!-- أسهم التقليب بين الملاحظات المتعددة -->
+                            <div id="note-pagination-bar" class="note-slider-controls">
+                                <button id="btn-prev-note" class="note-nav-btn" onclick="stepPhoneNote(-1)">▶ الملاحظة السابقة</button>
+                                <span id="note-counter-badge" style="font-size: 0.85rem; font-weight: 800; color: #854d0e;">1 / 1</span>
+                                <button id="btn-next-note" class="note-nav-btn" onclick="stepPhoneNote(1)">الملاحظة التالية ◀</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -603,6 +721,11 @@
         let casesData = [];
         let activeCaseIndex = 0;
 
+        // متغيرات التحكم بشاشة الآيفون والتقليب بين الرسائل والملاحظات
+        let currentPhoneApp = "messages"; // 'messages' أو 'notes'
+        let activePhoneNotesList = [];
+        let currentNoteSlideIndex = 0;
+
         async function loadCasesFromJson() {
             const hasLocalOverride = localStorage.getItem(OVERRIDE_KEY) === "true";
             const localSaved = localStorage.getItem(STORAGE_KEY);
@@ -642,7 +765,6 @@
             ].forEach(id => document.getElementById(id).classList.add("hidden"));
         }
 
-        // عرض صورة واجهة القضية بدلاً من النص في الصفحة الرئيسية
         function showPlayerHome() {
             hideAllViews();
             document.getElementById("view-player-home").classList.remove("hidden");
@@ -767,6 +889,7 @@
             document.getElementById("view-single-puzzle").classList.remove("hidden");
         }
 
+        // ====== قسم هاتف الضحية والتقليب بالأسهم ======
         function openVictimPhoneGate() {
             hideAllViews();
             const c = casesData[activeCaseIndex];
@@ -788,13 +911,39 @@
                 document.getElementById("phone-lock-screen").classList.add("hidden");
                 document.getElementById("phone-unlocked-banner").textContent = `✅ تم فك تشفير الهاتف بنجاح (الرمز: ${correctCode})`;
                 renderPhoneContents(c);
+                switchPhoneApp('messages');
                 document.getElementById("phone-unlocked-screen").classList.remove("hidden");
             } else {
                 document.getElementById("phone-code-error").classList.remove("hidden");
             }
         }
 
+        function extractPhoneNotesList(c) {
+            if (Array.isArray(c.phoneNotes) && c.phoneNotes.length > 0) {
+                return c.phoneNotes;
+            }
+            const list = [];
+            if (c.phoneNoteText && c.phoneNoteText.trim() !== "") {
+                const parts = c.phoneNoteText.split(/-{4,}/).map(s => s.trim()).filter(Boolean);
+                if (parts.length > 1) {
+                    parts.forEach((p, idx) => {
+                        list.push({
+                            title: idx === 0 ? (c.phoneNoteTitle || "ملاحظة خاصة #1") : `ملاحظة خاصة #${idx + 1}`,
+                            text: p
+                        });
+                    });
+                } else {
+                    list.push({
+                        title: c.phoneNoteTitle || "ملاحظة خاصة",
+                        text: c.phoneNoteText.trim()
+                    });
+                }
+            }
+            return list;
+        }
+
         function renderPhoneContents(c) {
+            // 1. بناء قائمة الرسائل
             const list = document.getElementById("phone-messages-list");
             list.innerHTML = "";
             (c.phoneMessages || []).forEach(m => {
@@ -811,16 +960,82 @@
                 list.appendChild(div);
             });
 
-            const noteWrapper = document.getElementById("phone-note-wrapper");
-            if ((c.phoneNoteTitle && c.phoneNoteTitle.trim() !== "") || (c.phoneNoteText && c.phoneNoteText.trim() !== "")) {
-                document.getElementById("phone-note-title").textContent = "📝 " + (c.phoneNoteTitle || "مذكرة شخصية");
-                document.getElementById("phone-note-body").textContent = c.phoneNoteText || "";
-                noteWrapper.classList.remove("hidden");
+            // 2. تجهيز قائمة الملاحظات للتقليب
+            activePhoneNotesList = extractPhoneNotesList(c);
+            currentNoteSlideIndex = 0;
+            renderCurrentNoteSlide();
+        }
+
+        function switchPhoneApp(targetApp) {
+            currentPhoneApp = targetApp;
+            const msgScreen = document.getElementById("iphone-screen-messages");
+            const noteScreen = document.getElementById("iphone-screen-notes");
+            const pillMsg = document.getElementById("pill-messages");
+            const pillNote = document.getElementById("pill-notes");
+            const appTitle = document.getElementById("iphone-current-app-title");
+
+            if (targetApp === "messages") {
+                msgScreen.classList.remove("hidden");
+                noteScreen.classList.add("hidden");
+                pillMsg.classList.add("active");
+                pillNote.classList.remove("active");
+                appTitle.textContent = "💬 الرسائل النصية (SMS)";
             } else {
-                noteWrapper.classList.add("hidden");
+                msgScreen.classList.add("hidden");
+                noteScreen.classList.remove("hidden");
+                pillMsg.classList.remove("active");
+                pillNote.classList.add("active");
+                appTitle.textContent = `📝 تطبيق الملاحظات (${activePhoneNotesList.length})`;
+                renderCurrentNoteSlide();
             }
         }
 
+        function togglePhoneAppScreen() {
+            if (currentPhoneApp === "messages") {
+                switchPhoneApp("notes");
+            } else {
+                switchPhoneApp("messages");
+            }
+        }
+
+        function renderCurrentNoteSlide() {
+            const titleEl = document.getElementById("phone-note-title");
+            const bodyEl = document.getElementById("phone-note-body");
+            const paginationBar = document.getElementById("note-pagination-bar");
+            const counterBadge = document.getElementById("note-counter-badge");
+            const prevBtn = document.getElementById("btn-prev-note");
+            const nextBtn = document.getElementById("btn-next-note");
+
+            if (!activePhoneNotesList || activePhoneNotesList.length === 0) {
+                titleEl.textContent = "📝 لا توجد ملاحظات";
+                bodyEl.textContent = "لا توجد ملاحظات مسجلة في هذا الهاتف.";
+                paginationBar.classList.add("hidden");
+                return;
+            }
+
+            const currentNote = activePhoneNotesList[currentNoteSlideIndex];
+            titleEl.textContent = `📝 ${currentNote.title || ('ملاحظة #' + (currentNoteSlideIndex + 1))}`;
+            bodyEl.textContent = currentNote.text || "";
+
+            if (activePhoneNotesList.length > 1) {
+                paginationBar.classList.remove("hidden");
+                counterBadge.textContent = `ملاحظة ${currentNoteSlideIndex + 1} من ${activePhoneNotesList.length}`;
+                prevBtn.disabled = currentNoteSlideIndex === 0;
+                nextBtn.disabled = currentNoteSlideIndex === activePhoneNotesList.length - 1;
+            } else {
+                paginationBar.classList.add("hidden");
+            }
+        }
+
+        function stepPhoneNote(direction) {
+            const nextIdx = currentNoteSlideIndex + direction;
+            if (nextIdx >= 0 && nextIdx < activePhoneNotesList.length) {
+                currentNoteSlideIndex = nextIdx;
+                renderCurrentNoteSlide();
+            }
+        }
+
+        // ====== المهمة الأولى والثانية ======
         function renderPlayerQuestions(questions, prefix, containerId) {
             const container = document.getElementById(containerId);
             container.innerHTML = "";
