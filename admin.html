@@ -174,7 +174,7 @@
                 </div>
             </div>
 
-            <!-- التبويب 2: هاتف الضحية -->
+            <!-- التبويب 2: هاتف الضحية (الرسائل + الملاحظات المتعددة) -->
             <div id="tab-phone" class="tab-pane hidden">
                 <div class="admin-item-box">
                     <h4 style="color: var(--navy-main); margin-bottom: 10px;">🔒 إعدادات قفل الهاتف</h4>
@@ -189,20 +189,22 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
                         <div>
                             <h4 style="color: var(--navy-main);">💬 الرسائل النصية المستخرجة (SMS / iMessage)</h4>
-                            <p style="font-size: 0.85rem; color: var(--text-muted);">أضف وعدّل الرسائل التي تظهر للاعب عند فتح قفل الهاتف</p>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">أضف وعدّل الرسائل التي تظهر للاعب في شاشة الرسائل</p>
                         </div>
                         <button class="btn btn-success" onclick="addPhoneMessage()">+ إضافة رسالة نصية جديدة</button>
                     </div>
                     <div id="adm-phone-messages-container"></div>
                 </div>
 
-                <div class="admin-item-box">
-                    <h4 style="color: var(--navy-main); margin-bottom: 10px;">📝 تطبيق الملاحظات (Apple Notes) داخل الهاتف</h4>
-                    <label class="label-title">عنوان المذكرة المحفوظة في الهاتف:</label>
-                    <input type="text" id="adm-note-title" class="input-field">
-
-                    <label class="label-title">نص المذكرة داخل الهاتف:</label>
-                    <textarea id="adm-note-text" class="input-field" rows="4"></textarea>
+                <div class="admin-item-box" style="border-right: 5px solid var(--gold);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <h4 style="color: var(--navy-main);">📝 تطبيق الملاحظات (Apple Notes) داخل الهاتف</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">يمكنك إضافة عدة ملاحظات مستقلة، وسيقوم اللاعب بالتقليب بينها بالأسهم (◀ / ▶)</p>
+                        </div>
+                        <button class="btn btn-success" onclick="addPhoneNote()">+ إضافة ملاحظة جديدة</button>
+                    </div>
+                    <div id="adm-phone-notes-container"></div>
                 </div>
             </div>
 
@@ -441,12 +443,36 @@
             sel.value = selectedIdx;
         }
 
+        // تحويل الملاحظة القديمة تلقائياً إلى مصفوفة ملاحظات مستقلة
+        function ensurePhoneNotesArray(c) {
+            if (!Array.isArray(c.phoneNotes) || c.phoneNotes.length === 0) {
+                c.phoneNotes = [];
+                if (c.phoneNoteText && c.phoneNoteText.trim() !== "") {
+                    const parts = c.phoneNoteText.split(/-{4,}/).map(s => s.trim()).filter(Boolean);
+                    if (parts.length > 1) {
+                        parts.forEach((part, idx) => {
+                            c.phoneNotes.push({
+                                title: idx === 0 ? (c.phoneNoteTitle || "ملاحظة خاصة #1") : `ملاحظة خاصة #${idx + 1}`,
+                                text: part
+                            });
+                        });
+                    } else {
+                        c.phoneNotes.push({
+                            title: c.phoneNoteTitle || "ملاحظة خاصة",
+                            text: c.phoneNoteText.trim()
+                        });
+                    }
+                }
+            }
+        }
+
         function loadSelectedCase() {
             selectedIdx = parseInt(document.getElementById("admin-case-selector").value, 10) || 0;
             const c = casesData[selectedIdx];
             if (!c) return;
 
             if (!c.phoneMessages) c.phoneMessages = [];
+            ensurePhoneNotesArray(c);
             if (!c.puzzles) c.puzzles = [];
             if (!c.task1Questions) c.task1Questions = [];
             if (!c.task2Questions) c.task2Questions = [];
@@ -459,8 +485,6 @@
 
             document.getElementById("adm-phone-code").value = c.phonePasscode || "250401";
             document.getElementById("adm-phone-hint").value = c.phoneHint || "تلميح القفل: (يوم العرض) + (رقم القاعة) + (رقم المقعد) من اليسار إلى اليمين:";
-            document.getElementById("adm-note-title").value = c.phoneNoteTitle || "";
-            document.getElementById("adm-note-text").value = c.phoneNoteText || "";
 
             document.getElementById("adm-partner-msg").value = c.partnerMessage || "";
             document.getElementById("adm-partner-img").value = c.partnerMessageImage || "";
@@ -475,6 +499,7 @@
             updateImagePreview('verdict');
 
             renderPhoneMessages();
+            renderPhoneNotes();
             renderPuzzles();
             renderTaskQuestions('task1Questions', 'adm-task1-questions-container');
             renderTaskQuestions('task2Questions', 'adm-task2-questions-container');
@@ -488,17 +513,13 @@
             btn.classList.add("active");
         }
 
-        // ====== قراءة الصور بدقة فائقة (HD / 2K) بدون تغبيش ======
         function compressAndReadImage(file, callback) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                // إذا كان حجم الصورة أقل من 2 ميغابايت، نحفظها بدقتها الأصلية 100% دون أي ضغط
                 if (file.size <= 2 * 1024 * 1024) {
                     callback(e.target.result);
                     return;
                 }
-
-                // للصور الضخمة جداً فقط، نحفظها بدقة 2400px (2K) وبجودة 95% فائقة الوضوح
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement("canvas");
@@ -522,6 +543,7 @@
             reader.readAsDataURL(file);
         }
 
+        // ====== إدارة الرسائل النصية في الهاتف ======
         function renderPhoneMessages() {
             const container = document.getElementById("adm-phone-messages-container");
             container.innerHTML = "";
@@ -576,6 +598,52 @@
             renderPhoneMessages();
         }
 
+        // ====== إدارة الملاحظات المتعددة في الهاتف (Apple Notes) ======
+        function renderPhoneNotes() {
+            const container = document.getElementById("adm-phone-notes-container");
+            container.innerHTML = "";
+            const notes = casesData[selectedIdx].phoneNotes || [];
+
+            if (notes.length === 0) {
+                container.innerHTML = `<p style="color:var(--text-muted); font-size:0.9rem; text-align:center; padding:10px;">لا توجد ملاحظات حالياً. اضغط "+ إضافة ملاحظة جديدة" لإضافة مذكرة للهاتف.</p>`;
+                return;
+            }
+
+            notes.forEach((n, nIdx) => {
+                const div = document.createElement("div");
+                div.className = "admin-item-box";
+                div.style.background = "#fefce8";
+                div.style.borderColor = "#fde047";
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <strong style="color:#854d0e;">📝 الملاحظة رقم #${nIdx + 1}</strong>
+                        <button class="btn btn-danger" style="padding:4px 10px; font-size:0.8rem;" onclick="removePhoneNote(${nIdx})">🗑️ حذف الملاحظة</button>
+                    </div>
+                    <label class="label-title">عنوان الملاحظة / التوقيت:</label>
+                    <input type="text" class="input-field" value="${escapeHtml(n.title || '')}" placeholder="مثال: مفاجأة الأرشيف (الساعة 06:15 مساءً)" oninput="casesData[selectedIdx].phoneNotes[${nIdx}].title = this.value">
+
+                    <label class="label-title">نص الملاحظة:</label>
+                    <textarea class="input-field" rows="3" style="margin-bottom:0;" oninput="casesData[selectedIdx].phoneNotes[${nIdx}].text = this.value">${escapeHtml(n.text || '')}</textarea>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addPhoneNote() {
+            if (!casesData[selectedIdx].phoneNotes) casesData[selectedIdx].phoneNotes = [];
+            casesData[selectedIdx].phoneNotes.push({
+                title: `ملاحظة خاصة #${casesData[selectedIdx].phoneNotes.length + 1}`,
+                text: "اكتب نص الملاحظة الجديدة هنا..."
+            });
+            renderPhoneNotes();
+        }
+
+        function removePhoneNote(nIdx) {
+            casesData[selectedIdx].phoneNotes.splice(nIdx, 1);
+            renderPhoneNotes();
+        }
+
+        // ====== إدارة الألغاز ======
         function renderPuzzles() {
             const container = document.getElementById("adm-puzzles-container");
             container.innerHTML = "";
@@ -641,6 +709,7 @@
             renderPuzzles();
         }
 
+        // ====== إدارة أسئلة المهمات ======
         function renderTaskQuestions(listKey, containerId) {
             const container = document.getElementById(containerId);
             container.innerHTML = "";
@@ -789,8 +858,15 @@
 
             c.phonePasscode = document.getElementById("adm-phone-code").value.trim() || "250401";
             c.phoneHint = document.getElementById("adm-phone-hint").value.trim();
-            c.phoneNoteTitle = document.getElementById("adm-note-title").value.trim();
-            c.phoneNoteText = document.getElementById("adm-note-text").value.trim();
+
+            // مزامنة الحقل القديم مع أول ملاحظة للتوافق
+            if (c.phoneNotes && c.phoneNotes.length > 0) {
+                c.phoneNoteTitle = c.phoneNotes[0].title || "";
+                c.phoneNoteText = c.phoneNotes.map(n => n.text).join("\n\n");
+            } else {
+                c.phoneNoteTitle = "";
+                c.phoneNoteText = "";
+            }
 
             c.partnerMessage = document.getElementById("adm-partner-msg").value;
             c.partnerMessageImage = document.getElementById("adm-partner-img").value.trim();
@@ -894,8 +970,9 @@
                 phoneMessages: [
                     { time: "02:00 ظهراً", direction: "واردة ↙", contact: "مشتبه به", text: "نص الرسالة..." }
                 ],
-                phoneNoteTitle: "مذكرة شخصية",
-                phoneNoteText: "نص المذكرة...",
+                phoneNotes: [
+                    { title: "ملاحظة خاصة #1", text: "نص الملاحظة..." }
+                ],
                 puzzles: [
                     { title: "اللغز الأول", hint: "اضغط لعرض الحل", solution: "تفاصيل الحل...", image: "" }
                 ],
