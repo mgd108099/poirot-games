@@ -150,7 +150,14 @@
             margin-top: 25px;
         }
 
-        @media (max-width: 640px) { .quad-boxes { grid-template-columns: 1fr; } }
+        .quad-boxes.three-items-layout > .big-option-box:last-child {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 640px) {
+            .quad-boxes { grid-template-columns: 1fr; }
+            .quad-boxes.three-items-layout > .big-option-box:last-child { grid-column: auto; }
+        }
 
         .big-option-box {
             background: var(--card-bg);
@@ -271,7 +278,6 @@
 
         .verdict-content { white-space: pre-line; line-height: 1.9; font-size: 1.02rem; color: #1e293b; }
 
-        /* واجهة هاتف الضحية التفاعلية مع أسهم التقليب */
         .iphone-frame {
             max-width: 480px;
             margin: 0 auto;
@@ -505,7 +511,7 @@
             </div>
         </div>
 
-        <!-- 3. لوحة القضية الرئيسية (الأيقونات الأربع) -->
+        <!-- 3. لوحة القضية الرئيسية -->
         <div id="view-case-hub" class="hidden">
             <button class="btn btn-back" onclick="showPlayerHome()">← العودة لقائمة القضايا</button>
             <div class="panel-card">
@@ -516,14 +522,14 @@
                     <img id="hub-cover-img" src="" alt="صورة القضية" style="max-height: 350px; object-fit: cover;">
                 </div>
 
-                <div class="quad-boxes">
+                <div id="hub-options-grid" class="quad-boxes">
                     <div class="big-option-box" onclick="openPuzzlesGrid()">
                         <span class="big-option-icon">🧩</span>
                         <h3>حل الألغاز</h3>
                         <p>الاطلاع على التفسير التقني وحلول الألغاز والشفرات الموجودة في الملف</p>
                     </div>
 
-                    <div class="big-option-box" onclick="openVictimPhoneGate()">
+                    <div id="hub-phone-option-box" class="big-option-box" onclick="openVictimPhoneGate()">
                         <span class="big-option-icon">📱</span>
                         <h3>هاتف الضحية (iPhone 15 Pro)</h3>
                         <p>أدخل رمز القفل لفك تشفير الهاتف وتصفح الرسائل والملاحظات</p>
@@ -587,25 +593,21 @@
                 <div class="iphone-frame">
                     <div class="iphone-notch"></div>
 
-                    <!-- شريط الأسهم للتقليب بين الرسائل والملاحظات -->
                     <div class="iphone-nav-bar">
                         <button class="iphone-arrow-btn" onclick="togglePhoneAppScreen()" title="تقليب بين الرسائل والملاحظات">▶</button>
                         <div class="iphone-app-title" id="iphone-current-app-title">💬 الرسائل النصية (SMS)</div>
                         <button class="iphone-arrow-btn" onclick="togglePhoneAppScreen()" title="تقليب بين الرسائل والملاحظات">◀</button>
                     </div>
 
-                    <!-- أزرار التبديل السريع -->
                     <div class="iphone-app-dots">
                         <button id="pill-messages" class="iphone-tab-pill active" onclick="switchPhoneApp('messages')">💬 الرسائل النصية</button>
                         <button id="pill-notes" class="iphone-tab-pill" onclick="switchPhoneApp('notes')">📝 الملاحظات</button>
                     </div>
 
-                    <!-- الشاشة 1: الرسائل النصية -->
                     <div id="iphone-screen-messages" style="flex: 1;">
                         <div id="phone-messages-list"></div>
                     </div>
 
-                    <!-- الشاشة 2: تطبيق الملاحظات (مع أسهم للتقليب بين الملاحظات) -->
                     <div id="iphone-screen-notes" class="hidden" style="flex: 1;">
                         <div id="phone-note-wrapper" class="apple-note-card">
                             <div>
@@ -613,7 +615,6 @@
                                 <div style="font-size: 0.94rem; line-height: 1.75; font-weight: 600; white-space: pre-line;" id="phone-note-body"></div>
                             </div>
 
-                            <!-- أسهم التقليب بين الملاحظات المتعددة -->
                             <div id="note-pagination-bar" class="note-slider-controls">
                                 <button id="btn-prev-note" class="note-nav-btn" onclick="stepPhoneNote(-1)">▶ الملاحظة السابقة</button>
                                 <span id="note-counter-badge" style="font-size: 0.85rem; font-weight: 800; color: #854d0e;">1 / 1</span>
@@ -721,8 +722,7 @@
         let casesData = [];
         let activeCaseIndex = 0;
 
-        // متغيرات التحكم بشاشة الآيفون والتقليب بين الرسائل والملاحظات
-        let currentPhoneApp = "messages"; // 'messages' أو 'notes'
+        let currentPhoneApp = "messages";
         let activePhoneNotesList = [];
         let currentNoteSlideIndex = 0;
 
@@ -836,6 +836,17 @@
                 hubCoverBox.classList.add("hidden");
             }
 
+            // إظهار أو إخفاء قسم هاتف الضحية حسب إعدادات القضية
+            const phoneBox = document.getElementById("hub-phone-option-box");
+            const optionsGrid = document.getElementById("hub-options-grid");
+            if (c.enablePhone === false) {
+                phoneBox.classList.add("hidden");
+                optionsGrid.classList.add("three-items-layout");
+            } else {
+                phoneBox.classList.remove("hidden");
+                optionsGrid.classList.remove("three-items-layout");
+            }
+
             document.getElementById("view-case-hub").classList.remove("hidden");
         }
 
@@ -889,7 +900,6 @@
             document.getElementById("view-single-puzzle").classList.remove("hidden");
         }
 
-        // ====== قسم هاتف الضحية والتقليب بالأسهم ======
         function openVictimPhoneGate() {
             hideAllViews();
             const c = casesData[activeCaseIndex];
@@ -943,7 +953,6 @@
         }
 
         function renderPhoneContents(c) {
-            // 1. بناء قائمة الرسائل
             const list = document.getElementById("phone-messages-list");
             list.innerHTML = "";
             (c.phoneMessages || []).forEach(m => {
@@ -960,7 +969,6 @@
                 list.appendChild(div);
             });
 
-            // 2. تجهيز قائمة الملاحظات للتقليب
             activePhoneNotesList = extractPhoneNotesList(c);
             currentNoteSlideIndex = 0;
             renderCurrentNoteSlide();
@@ -1035,7 +1043,6 @@
             }
         }
 
-        // ====== المهمة الأولى والثانية ======
         function renderPlayerQuestions(questions, prefix, containerId) {
             const container = document.getElementById(containerId);
             container.innerHTML = "";
