@@ -135,7 +135,7 @@
             <!-- أزرار التبويبات الستة -->
             <div class="admin-tabs">
                 <button class="admin-tab-btn active" onclick="switchTab('tab-basic', this)">1. بيانات القضية وصورة الواجهة</button>
-                <button class="admin-tab-btn" onclick="switchTab('tab-phone', this)">2. هاتف الضحية (iPhone)</button>
+                <button class="admin-tab-btn" onclick="switchTab('tab-phone', this)">2. هاتف الضحية (اختياري)</button>
                 <button class="admin-tab-btn" onclick="switchTab('tab-puzzles', this)">3. حل الألغاز</button>
                 <button class="admin-tab-btn" onclick="switchTab('tab-task1', this)">4. المهمة الأولى ورسالة الشريك</button>
                 <button class="admin-tab-btn" onclick="switchTab('tab-task2', this)">5. المهمة الثانية وحكم المحكمة</button>
@@ -174,37 +174,46 @@
                 </div>
             </div>
 
-            <!-- التبويب 2: هاتف الضحية (الرسائل + الملاحظات المتعددة) -->
+            <!-- التبويب 2: هاتف الضحية (اختياري: تفعيل/إلغاء + الرسائل + الملاحظات المتعددة) -->
             <div id="tab-phone" class="tab-pane hidden">
-                <div class="admin-item-box">
-                    <h4 style="color: var(--navy-main); margin-bottom: 10px;">🔒 إعدادات قفل الهاتف</h4>
-                    <label class="label-title">📱 رمز قفل هاتف الضحية (مثال: 250401):</label>
-                    <input type="text" id="adm-phone-code" class="input-field" style="font-weight: 800; letter-spacing: 2px;">
-
-                    <label class="label-title">تلميح قفل الهاتف (يظهر للاعب تحت شاشة القفل):</label>
-                    <input type="text" id="adm-phone-hint" class="input-field" placeholder="تلميح القفل: (يوم العرض) + (رقم القاعة) + (رقم المقعد) من اليسار إلى اليمين">
+                <div class="admin-item-box" style="background: #fffbeb; border: 2px solid var(--gold);">
+                    <label style="display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1rem; color: var(--navy-dark); cursor: pointer;">
+                        <input type="checkbox" id="adm-phone-enabled" style="width: 22px; height: 22px; accent-color: var(--navy-main); cursor: pointer;" onchange="togglePhoneSectionVisibility()">
+                        <span>📱 تفعيل قسم "هاتف الضحية" في هذه القضية (أزل إشارة الصح إذا كانت القضية لا تحتاج لهاتف)</span>
+                    </label>
                 </div>
 
-                <div class="admin-item-box">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
-                        <div>
-                            <h4 style="color: var(--navy-main);">💬 الرسائل النصية المستخرجة (SMS / iMessage)</h4>
-                            <p style="font-size: 0.85rem; color: var(--text-muted);">أضف وعدّل الرسائل التي تظهر للاعب في شاشة الرسائل</p>
-                        </div>
-                        <button class="btn btn-success" onclick="addPhoneMessage()">+ إضافة رسالة نصية جديدة</button>
-                    </div>
-                    <div id="adm-phone-messages-container"></div>
-                </div>
+                <div id="adm-phone-fields-wrapper">
+                    <div class="admin-item-box">
+                        <h4 style="color: var(--navy-main); margin-bottom: 10px;">🔒 إعدادات قفل الهاتف</h4>
+                        <label class="label-title">📱 رمز قفل هاتف الضحية (مثال: 250401):</label>
+                        <input type="text" id="adm-phone-code" class="input-field" style="font-weight: 800; letter-spacing: 2px;">
 
-                <div class="admin-item-box" style="border-right: 5px solid var(--gold);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
-                        <div>
-                            <h4 style="color: var(--navy-main);">📝 تطبيق الملاحظات (Apple Notes) داخل الهاتف</h4>
-                            <p style="font-size: 0.85rem; color: var(--text-muted);">يمكنك إضافة عدة ملاحظات مستقلة، وسيقوم اللاعب بالتقليب بينها بالأسهم (◀ / ▶)</p>
-                        </div>
-                        <button class="btn btn-success" onclick="addPhoneNote()">+ إضافة ملاحظة جديدة</button>
+                        <label class="label-title">تلميح قفل الهاتف (يظهر للاعب تحت شاشة القفل):</label>
+                        <input type="text" id="adm-phone-hint" class="input-field" placeholder="تلميح القفل: (يوم العرض) + (رقم القاعة) + (رقم المقعد) من اليسار إلى اليمين">
                     </div>
-                    <div id="adm-phone-notes-container"></div>
+
+                    <div class="admin-item-box">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <h4 style="color: var(--navy-main);">💬 الرسائل النصية المستخرجة (SMS / iMessage)</h4>
+                                <p style="font-size: 0.85rem; color: var(--text-muted);">أضف وعدّل الرسائل التي تظهر للاعب في شاشة الرسائل</p>
+                            </div>
+                            <button class="btn btn-success" onclick="addPhoneMessage()">+ إضافة رسالة نصية جديدة</button>
+                        </div>
+                        <div id="adm-phone-messages-container"></div>
+                    </div>
+
+                    <div class="admin-item-box" style="border-right: 5px solid var(--gold);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <h4 style="color: var(--navy-main);">📝 تطبيق الملاحظات (Apple Notes) داخل الهاتف</h4>
+                                <p style="font-size: 0.85rem; color: var(--text-muted);">يمكنك إضافة عدة ملاحظات مستقلة، وسيقوم اللاعب بالتقليب بينها بالأسهم (◀ / ▶)</p>
+                            </div>
+                            <button class="btn btn-success" onclick="addPhoneNote()">+ إضافة ملاحظة جديدة</button>
+                        </div>
+                        <div id="adm-phone-notes-container"></div>
+                    </div>
                 </div>
             </div>
 
@@ -443,7 +452,6 @@
             sel.value = selectedIdx;
         }
 
-        // تحويل الملاحظة القديمة تلقائياً إلى مصفوفة ملاحظات مستقلة
         function ensurePhoneNotesArray(c) {
             if (!Array.isArray(c.phoneNotes) || c.phoneNotes.length === 0) {
                 c.phoneNotes = [];
@@ -466,6 +474,19 @@
             }
         }
 
+        function togglePhoneSectionVisibility() {
+            const enabled = document.getElementById("adm-phone-enabled").checked;
+            const wrapper = document.getElementById("adm-phone-fields-wrapper");
+            if (enabled) {
+                wrapper.classList.remove("hidden");
+            } else {
+                wrapper.classList.add("hidden");
+            }
+            if (casesData[selectedIdx]) {
+                casesData[selectedIdx].enablePhone = enabled;
+            }
+        }
+
         function loadSelectedCase() {
             selectedIdx = parseInt(document.getElementById("admin-case-selector").value, 10) || 0;
             const c = casesData[selectedIdx];
@@ -482,6 +503,10 @@
             document.getElementById("adm-cover-img").value = c.coverImage || "";
             document.getElementById("adm-desc").value = c.desc || "";
             document.getElementById("adm-pass").value = c.casePassword || "511";
+
+            // خيار تفعيل الهاتف (مفعّل افتراضياً ما لم يتم إلغاؤه)
+            document.getElementById("adm-phone-enabled").checked = (c.enablePhone !== false);
+            togglePhoneSectionVisibility();
 
             document.getElementById("adm-phone-code").value = c.phonePasscode || "250401";
             document.getElementById("adm-phone-hint").value = c.phoneHint || "تلميح القفل: (يوم العرض) + (رقم القاعة) + (رقم المقعد) من اليسار إلى اليمين:";
@@ -543,7 +568,6 @@
             reader.readAsDataURL(file);
         }
 
-        // ====== إدارة الرسائل النصية في الهاتف ======
         function renderPhoneMessages() {
             const container = document.getElementById("adm-phone-messages-container");
             container.innerHTML = "";
@@ -598,7 +622,6 @@
             renderPhoneMessages();
         }
 
-        // ====== إدارة الملاحظات المتعددة في الهاتف (Apple Notes) ======
         function renderPhoneNotes() {
             const container = document.getElementById("adm-phone-notes-container");
             container.innerHTML = "";
@@ -643,7 +666,6 @@
             renderPhoneNotes();
         }
 
-        // ====== إدارة الألغاز ======
         function renderPuzzles() {
             const container = document.getElementById("adm-puzzles-container");
             container.innerHTML = "";
@@ -709,7 +731,6 @@
             renderPuzzles();
         }
 
-        // ====== إدارة أسئلة المهمات ======
         function renderTaskQuestions(listKey, containerId) {
             const container = document.getElementById(containerId);
             container.innerHTML = "";
@@ -856,10 +877,10 @@
             c.desc = document.getElementById("adm-desc").value.trim();
             c.casePassword = document.getElementById("adm-pass").value.trim() || "511";
 
+            c.enablePhone = document.getElementById("adm-phone-enabled").checked;
             c.phonePasscode = document.getElementById("adm-phone-code").value.trim() || "250401";
             c.phoneHint = document.getElementById("adm-phone-hint").value.trim();
 
-            // مزامنة الحقل القديم مع أول ملاحظة للتوافق
             if (c.phoneNotes && c.phoneNotes.length > 0) {
                 c.phoneNoteTitle = c.phoneNotes[0].title || "";
                 c.phoneNoteText = c.phoneNotes.map(n => n.text).join("\n\n");
@@ -965,6 +986,7 @@
                 coverImage: "",
                 desc: "",
                 casePassword: "511",
+                enablePhone: true,
                 phonePasscode: "250401",
                 phoneHint: "تلميح القفل: أدخل الرمز المكون من 6 أرقام",
                 phoneMessages: [
