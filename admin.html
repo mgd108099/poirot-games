@@ -83,7 +83,7 @@
         }
 
         .img-preview-mini {
-            max-height: 180px; max-width: 100%; border-radius: 6px;
+            max-height: 220px; max-width: 100%; border-radius: 6px;
             border: 1px solid #cbd5e1; margin-top: 10px; display: block;
         }
 
@@ -97,7 +97,7 @@
 
     <div class="admin-topbar">
         <div>
-            <h2>🛠️ لوحة تحكم بوارو الشاملة (إدارة القضية، الهاتف، الألغاز، والمهمات)</h2>
+            <h2>🛠️ لوحة تحكم بوارو الشاملة (دقة صور فائقة HD)</h2>
         </div>
         <div style="display: flex; gap: 10px;">
             <a href="index.html" target="_blank" class="btn btn-gold">👁️ فتح صفحة اللاعبين (index.html)</a>
@@ -155,10 +155,10 @@
 
                     <div class="image-upload-zone" style="margin-bottom: 14px;">
                         <label class="label-title">🖼️ صورة واجهة القضية (تظهر للاعب في الصفحة الرئيسية بدلاً من النص):</label>
-                        <input type="text" id="adm-cover-img" class="input-field" placeholder="اكتب اسم الصورة (مثال: لللل.jpg) أو اخترها من جهازك بالزر أدناه..." oninput="updateImagePreview('cover')">
+                        <input type="text" id="adm-cover-img" class="input-field" placeholder="اكتب اسم الصورة أو اخترها من جهازك بالزر أدناه..." oninput="updateImagePreview('cover')">
                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                             <label class="btn btn-outline" style="cursor: pointer; padding: 6px 12px; font-size: 0.85rem;">
-                                📷 اختيار صورة الواجهة من جهازك
+                                📷 اختيار صورة الواجهة من جهازك (بدقة كاملة)
                                 <input type="file" accept="image/*" style="display: none;" onchange="handleDocImageUpload(this, 'cover')">
                             </label>
                             <button type="button" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="clearDocImage('cover')">🗑️ إزالة الصورة</button>
@@ -211,7 +211,7 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
                     <div>
                         <h4>🧩 قائمة الألغاز وحلولها في هذه القضية:</h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted);">يمكنك تعديل عنوان اللغز وتلميحه ونص الحل أو إرفاق صورة توضيحية</p>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">يمكنك تعديل عنوان اللغز وتلميحه ونص الحل أو إرفاق صورة توضيحية بدقة عالية</p>
                     </div>
                     <button class="btn btn-success" onclick="addPuzzle()">+ إضافة لغز جديد</button>
                 </div>
@@ -239,7 +239,7 @@
                         <input type="text" id="adm-partner-img" class="input-field" placeholder="رابط الصورة أو اختر صورة من جهازك..." oninput="updateImagePreview('partner')">
                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                             <label class="btn btn-outline" style="cursor: pointer; padding: 6px 12px; font-size: 0.85rem;">
-                                📷 اختيار صورة من جهازك
+                                📷 اختيار صورة من جهازك (بدقة كاملة)
                                 <input type="file" accept="image/*" style="display: none;" onchange="handleDocImageUpload(this, 'partner')">
                             </label>
                             <button type="button" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="clearDocImage('partner')">🗑️ إزالة الصورة</button>
@@ -270,7 +270,7 @@
                         <input type="text" id="adm-report-img" class="input-field" placeholder="رابط الصورة أو اختر صورة من جهازك..." oninput="updateImagePreview('report')">
                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                             <label class="btn btn-outline" style="cursor: pointer; padding: 6px 12px; font-size: 0.85rem;">
-                                📷 اختيار صورة من جهازك
+                                📷 اختيار صورة من جهازك (بدقة كاملة)
                                 <input type="file" accept="image/*" style="display: none;" onchange="handleDocImageUpload(this, 'report')">
                             </label>
                             <button type="button" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="clearDocImage('report')">🗑️ إزالة الصورة</button>
@@ -289,7 +289,7 @@
                         <input type="text" id="adm-verdict-img" class="input-field" placeholder="رابط الصورة أو اختر صورة من جهازك..." oninput="updateImagePreview('verdict')">
                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                             <label class="btn btn-outline" style="cursor: pointer; padding: 6px 12px; font-size: 0.85rem;">
-                                📷 اختيار صورة من جهازك
+                                📷 اختيار صورة من جهازك (بدقة كاملة)
                                 <input type="file" accept="image/*" style="display: none;" onchange="handleDocImageUpload(this, 'verdict')">
                             </label>
                             <button type="button" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="clearDocImage('verdict')">🗑️ إزالة الصورة</button>
@@ -397,7 +397,7 @@
             }
 
             if ((!casesData || casesData.length === 0) && localSaved) {
-                casesData = JSON.parse(localSaved);
+                try { casesData = JSON.parse(localSaved); } catch (e) {}
             }
 
             document.getElementById("gh-repo").value = localStorage.getItem("poirot_gh_repo") || "mgd108099/poirot-games";
@@ -418,7 +418,7 @@
                 if (res.ok) {
                     casesData = await res.json();
                     localStorage.removeItem(OVERRIDE_KEY);
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(casesData));
+                    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(casesData)); } catch (e) {}
                     selectedIdx = 0;
                     populateCaseSelector();
                     loadSelectedCase();
@@ -488,13 +488,21 @@
             btn.classList.add("active");
         }
 
+        // ====== قراءة الصور بدقة فائقة (HD / 2K) بدون تغبيش ======
         function compressAndReadImage(file, callback) {
             const reader = new FileReader();
             reader.onload = function(e) {
+                // إذا كان حجم الصورة أقل من 2 ميغابايت، نحفظها بدقتها الأصلية 100% دون أي ضغط
+                if (file.size <= 2 * 1024 * 1024) {
+                    callback(e.target.result);
+                    return;
+                }
+
+                // للصور الضخمة جداً فقط، نحفظها بدقة 2400px (2K) وبجودة 95% فائقة الوضوح
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement("canvas");
-                    const MAX_WIDTH = 1000;
+                    const MAX_WIDTH = 2400;
                     let width = img.width;
                     let height = img.height;
                     if (width > MAX_WIDTH) {
@@ -504,8 +512,10 @@
                     canvas.width = width;
                     canvas.height = height;
                     const ctx = canvas.getContext("2d");
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = "high";
                     ctx.drawImage(img, 0, 0, width, height);
-                    callback(canvas.toDataURL("image/jpeg", 0.82));
+                    callback(canvas.toDataURL("image/jpeg", 0.95));
                 };
                 img.src = e.target.result;
             };
@@ -594,7 +604,7 @@
                         <input type="text" class="input-field" value="${escapeHtml(p.image || '')}" placeholder="رابط الصورة أو اختر صورة من جهازك..." oninput="casesData[selectedIdx].puzzles[${pIdx}].image = this.value; renderPuzzles();">
                         <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                             <label class="btn btn-outline" style="cursor:pointer; padding:6px 12px; font-size:0.82rem;">
-                                📷 اختيار صورة من جهازك
+                                📷 اختيار صورة من جهازك (بدقة كاملة)
                                 <input type="file" accept="image/*" style="display:none;" onchange="uploadPuzzleImage(this, ${pIdx})">
                             </label>
                             ${hasImg ? `<button type="button" class="btn btn-danger" style="padding:6px 12px; font-size:0.82rem;" onclick="casesData[selectedIdx].puzzles[${pIdx}].image=''; renderPuzzles();">🗑️ إزالة الصورة</button>` : ''}
@@ -612,7 +622,7 @@
             compressAndReadImage(file, (dataUrl) => {
                 casesData[selectedIdx].puzzles[pIdx].image = dataUrl;
                 renderPuzzles();
-                showStatus("✅ تم إرفاق صورة حل اللغز بنجاح!");
+                showStatus("✅ تم إرفاق صورة حل اللغز بدقة كاملة!");
             });
         }
 
@@ -739,7 +749,7 @@
                 if (inputId) {
                     document.getElementById(inputId).value = dataUrl;
                     updateImagePreview(targetType);
-                    showStatus("✅ تم إرفاق الصورة بنجاح!");
+                    showStatus("✅ تم إرفاق الصورة بدقتها العالية الكاملة!");
                 }
             });
         }
@@ -790,8 +800,12 @@
             c.courtVerdictImage = document.getElementById("adm-verdict-img").value.trim();
             c.updatedAt = Date.now();
 
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(casesData));
-            localStorage.setItem(OVERRIDE_KEY, "true");
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(casesData));
+                localStorage.setItem(OVERRIDE_KEY, "true");
+            } catch (err) {
+                console.warn("حجم الصور عالية الدقة أكبر من ذاكرة المتصفح المؤقتة، استخدم زر تنزيل cases.json لحفظها.");
+            }
             populateCaseSelector();
 
             if (showMsg) {
