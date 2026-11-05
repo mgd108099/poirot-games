@@ -150,13 +150,13 @@
             margin-top: 25px;
         }
 
-        .quad-boxes.three-items-layout > .big-option-box:last-child {
+        .quad-boxes.three-items-layout > .big-option-box.span-full-row {
             grid-column: 1 / -1;
         }
 
         @media (max-width: 640px) {
             .quad-boxes { grid-template-columns: 1fr; }
-            .quad-boxes.three-items-layout > .big-option-box:last-child { grid-column: auto; }
+            .quad-boxes.three-items-layout > .big-option-box.span-full-row { grid-column: auto; }
         }
 
         .big-option-box {
@@ -168,6 +168,7 @@
             cursor: pointer;
             transition: all 0.25s ease;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            position: relative;
         }
 
         .big-option-box:hover {
@@ -177,6 +178,28 @@
         }
 
         .big-option-box.gold-border:hover { border-color: var(--gold); }
+
+        .big-option-box.locked-stage {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            opacity: 0.82;
+        }
+        .big-option-box.locked-stage:hover {
+            border-color: var(--danger);
+            transform: none;
+        }
+
+        .stage-status-pill {
+            display: inline-block;
+            font-size: 0.78rem;
+            font-weight: 800;
+            padding: 3px 12px;
+            border-radius: 14px;
+            margin-top: 8px;
+        }
+        .status-locked { background: #fee2e2; color: var(--danger); }
+        .status-unlocked { background: #d1fae5; color: var(--success); }
+
         .big-option-icon { font-size: 2.7rem; margin-bottom: 10px; display: block; }
         .big-option-box h3 { color: var(--navy-dark); font-size: 1.25rem; margin-bottom: 6px; }
         .big-option-box p { color: var(--text-muted); font-size: 0.88rem; }
@@ -277,6 +300,26 @@
         }
 
         .verdict-content { white-space: pre-line; line-height: 1.9; font-size: 1.02rem; color: #1e293b; }
+
+        .hint-box {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-right: 5px solid var(--gold);
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            color: #92400e;
+            font-weight: 700;
+        }
+
+        .spoiler-guard-box {
+            text-align: center;
+            background: #f1f5f9;
+            border: 2px dashed #94a3b8;
+            border-radius: 12px;
+            padding: 22px;
+            margin-top: 10px;
+        }
 
         .iphone-frame {
             max-width: 480px;
@@ -522,11 +565,13 @@
                     <img id="hub-cover-img" src="" alt="صورة القضية" style="max-height: 350px; object-fit: cover;">
                 </div>
 
+                <div id="hub-lock-notice" class="alert-msg alert-error hidden"></div>
+
                 <div id="hub-options-grid" class="quad-boxes">
-                    <div class="big-option-box" onclick="openPuzzlesGrid()">
+                    <div id="hub-puzzles-option-box" class="big-option-box" onclick="openPuzzlesGrid()">
                         <span class="big-option-icon">🧩</span>
-                        <h3>حل الألغاز</h3>
-                        <p>الاطلاع على التفسير التقني وحلول الألغاز والشفرات الموجودة في الملف</p>
+                        <h3>تلميحات وحلول الألغاز</h3>
+                        <p>الاطلاع على تلميحات استرشادية للألغاز والشفرات مع إمكانية كشف الحل</p>
                     </div>
 
                     <div id="hub-phone-option-box" class="big-option-box" onclick="openVictimPhoneGate()">
@@ -535,16 +580,17 @@
                         <p>أدخل رمز القفل لفك تشفير الهاتف وتصفح الرسائل والملاحظات</p>
                     </div>
 
-                    <div class="big-option-box gold-border" onclick="openTask1View()">
+                    <div id="hub-task1-option-box" class="big-option-box gold-border" onclick="openTask1View()">
                         <span class="big-option-icon">🕵️‍♂️</span>
-                        <h3>حل المهمة الأولى</h3>
-                        <p>أجب عن أسئلة المرحلة الأولى لكشف المنفّذ وفتح رسالة شريك المحقق</p>
+                        <h3 id="hub-task1-title">حل المهمة الأولى</h3>
+                        <p id="hub-task1-desc">أجب عن أسئلة المرحلة الأولى لكشف المنفّذ وفتح رسالة شريك المحقق</p>
                     </div>
 
-                    <div class="big-option-box gold-border" onclick="openTask2View()">
-                        <span class="big-option-icon">⚖️</span>
+                    <div id="hub-task2-option-box" class="big-option-box gold-border" onclick="tryOpenTask2View()">
+                        <span class="big-option-icon" id="hub-task2-icon">⚖️</span>
                         <h3>حل المهمة الثانية</h3>
                         <p>أجب عن أسئلة المرحلة النهائية لكشف العقل المدبّر وفتح الخط الزمني وحكم المحكمة</p>
+                        <span id="hub-task2-status-pill" class="stage-status-pill status-locked">🔒 يُفتح تلقائياً بعد حل المهمة الأولى</span>
                     </div>
                 </div>
             </div>
@@ -554,27 +600,46 @@
         <div id="view-puzzles-grid" class="hidden">
             <button class="btn btn-back" onclick="backToCaseHub()">← العودة لأقسام القضية</button>
             <div class="section-header">
-                <h2>🧩 حلول الألغاز والأدلة التقنية</h2>
-                <p>اضغط على أي لغز لعرض الحل والتفسير الجنائي الكامل له</p>
+                <h2>🧩 تلميحات وحلول الألغاز</h2>
+                <p>اضغط على أي لغز لقراءة التلميح الاسترشادي أولاً، ويمكنك كشف الحل الكامل عند الحاجة</p>
             </div>
             <div id="puzzles-cards-container" class="grid-cards"></div>
         </div>
 
-        <!-- 5. صفحة حل اللغز المفرد -->
+        <!-- 5. صفحة حل اللغز المفرد (مع نظام منع الحرق التلقائي) -->
         <div id="view-single-puzzle" class="hidden">
             <button class="btn btn-back" onclick="openPuzzlesGrid()">← العودة لقائمة الألغاز</button>
             <div class="panel-card">
-                <span class="card-badge" id="single-puzzle-badge">حل اللغز</span>
+                <span class="card-badge" id="single-puzzle-badge">لغز جنائي</span>
                 <h2 id="single-puzzle-title" style="color: var(--navy-dark); margin-bottom: 14px;"></h2>
-                <div id="single-puzzle-solution" style="background: #f8fafc; border-right: 4px solid var(--gold); padding: 20px; border-radius: 8px; white-space: pre-line; font-size: 1.02rem;"></div>
-                <div id="single-puzzle-img-box" class="evidence-image-box hidden">
-                    <img id="single-puzzle-img" src="" alt="صورة حل اللغز" onclick="openLightbox(this.src)">
-                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 6px;">🔍 اضغط على الصورة لتكبيرها بدقتها الكاملة</p>
+
+                <!-- التلميح يظهر أولاً بدون حرق -->
+                <div class="hint-box">
+                    <div style="font-size: 0.85rem; color: #b45309; margin-bottom: 4px;">💡 تلميح استرشادي للحل:</div>
+                    <div id="single-puzzle-hint-text"></div>
+                </div>
+
+                <!-- زر كشف الحل الكامل لمنع الحرق بالخطأ -->
+                <div id="puzzle-spoiler-guard" class="spoiler-guard-box">
+                    <p style="color: var(--text-dark); font-weight: 700; margin-bottom: 12px;">
+                        🛡️ تم إخفاء الحل النهائي لمنع حرق اللغز عليك بالخطأ. حاول استنتاج الحل من الأوراق أولاً!
+                    </p>
+                    <button class="btn btn-gold" onclick="revealFullPuzzleSolution()">
+                        👁️ عجزت عن الحل؟ اضغط هنا لإظهار الحل التفصيلي الكامل
+                    </button>
+                </div>
+
+                <div id="puzzle-full-solution-wrapper" class="hidden">
+                    <div id="single-puzzle-solution" style="background: #f8fafc; border-right: 4px solid var(--success); padding: 20px; border-radius: 8px; white-space: pre-line; font-size: 1.02rem; margin-top: 10px;"></div>
+                    <div id="single-puzzle-img-box" class="evidence-image-box hidden">
+                        <img id="single-puzzle-img" src="" alt="صورة حل اللغز" onclick="openLightbox(this.src)">
+                        <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 6px;">🔍 اضغط على الصورة لتكبيرها بدقتها الكاملة</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 6. قسم هاتف الضحية (قفل + تقليب بالأسهم بين الرسائل والملاحظات) -->
+        <!-- 6. قسم هاتف الضحية -->
         <div id="view-victim-phone" class="hidden">
             <button class="btn btn-back" onclick="backToCaseHub()">← العودة لأقسام القضية</button>
 
@@ -626,24 +691,28 @@
             </div>
         </div>
 
-        <!-- 7. حل المهمة الأولى + رسالة شريك المحقق -->
+        <!-- 7. حل المهمة الأولى -->
         <div id="view-task1" class="hidden">
             <button class="btn btn-back" onclick="backToCaseHub()">← العودة لأقسام القضية</button>
             <div class="panel-card">
                 <div class="section-header" style="margin-bottom: 20px;">
-                    <h2>🕵️‍♂️ حل المهمة الأولى (المرحلة الأولى)</h2>
-                    <p>أجب عن الأسئلة التالية للإيقاع بالجاني المنفّذ وفتح المظروف السري الثاني</p>
+                    <h2 id="view-task1-header-title">🕵️‍♂️ حل المهمة الأولى (المرحلة الأولى)</h2>
+                    <p id="view-task1-header-sub">أجب عن الأسئلة التالية للإيقاع بالجاني المنفّذ وفتح المظروف السري الثاني</p>
                 </div>
 
                 <div id="task1-questions-container"></div>
                 <div id="task1-error-box" class="alert-msg alert-error hidden"></div>
 
-                <button class="btn btn-gold" style="width: 100%; padding: 14px; font-size: 1.05rem; margin-top: 10px;" onclick="verifyTaskAnswers('task1Questions', 't1', 'task1-error-box', showPartnerMessage)">
-                    ✔️ تحقق من إجابات المهمة الأولى
+                <button class="btn btn-gold" style="width: 100%; padding: 14px; font-size: 1.05rem; margin-top: 10px;" onclick="verifyTaskAnswers('task1Questions', 't1', 'task1-error-box', onTask1Solved)">
+                    ✔️ تحقق من الإجابات
                 </button>
             </div>
 
+            <!-- رسالة شريك المحقق (تظهر إذا كانت القضية من مهمتين) -->
             <div id="view-partner-msg" class="hidden">
+                <div class="alert-msg alert-success" style="margin-top: 20px;">
+                    🔓 أحسنت! تم فتح قفل (المهمة الثانية) تلقائياً في لوحة القضية. اقرأ رسالة شريكك وافتح الظرف الثاني:
+                </div>
                 <div class="official-doc" style="border-color: var(--navy-main);">
                     <div class="official-doc-header">
                         <h3>📩 إشعار داخلي عاجل — رسالة شريك المحقق</h3>
@@ -656,6 +725,9 @@
                     </div>
                 </div>
             </div>
+
+            <!-- حاوية الحكم النهائي داخل المهمة الأولى (تظهر إذا كانت القضية من مهمة واحدة فقط) -->
+            <div id="view-task1-final-verdict" class="hidden"></div>
         </div>
 
         <!-- 8. حل المهمة الثانية + الخط الزمني وحكم المحكمة -->
@@ -725,6 +797,14 @@
         let currentPhoneApp = "messages";
         let activePhoneNotesList = [];
         let currentNoteSlideIndex = 0;
+
+        function isTask1Completed(caseId) {
+            return sessionStorage.getItem("poirot_t1_solved_" + caseId) === "true";
+        }
+
+        function markTask1Completed(caseId) {
+            sessionStorage.setItem("poirot_t1_solved_" + caseId, "true");
+        }
 
         async function loadCasesFromJson() {
             const hasLocalOverride = localStorage.getItem(OVERRIDE_KEY) === "true";
@@ -823,6 +903,7 @@
         function openCaseHub() {
             const c = casesData[activeCaseIndex];
             hideAllViews();
+            document.getElementById("hub-lock-notice").classList.add("hidden");
             document.getElementById("hub-case-code").textContent = c.code || "ملف تحقيق";
             document.getElementById("hub-case-title").textContent = c.title;
             document.getElementById("hub-case-desc").textContent = c.desc || "";
@@ -836,14 +917,50 @@
                 hubCoverBox.classList.add("hidden");
             }
 
-            // إظهار أو إخفاء قسم هاتف الضحية حسب إعدادات القضية
+            const puzzlesBox = document.getElementById("hub-puzzles-option-box");
             const phoneBox = document.getElementById("hub-phone-option-box");
+            const task1Box = document.getElementById("hub-task1-option-box");
+            const task2Box = document.getElementById("hub-task2-option-box");
             const optionsGrid = document.getElementById("hub-options-grid");
-            if (c.enablePhone === false) {
-                phoneBox.classList.add("hidden");
-                optionsGrid.classList.add("three-items-layout");
-            } else {
+
+            const hasPhone = c.enablePhone !== false;
+            const hasTask2 = c.enableTask2 !== false;
+
+            if (hasPhone) {
                 phoneBox.classList.remove("hidden");
+            } else {
+                phoneBox.classList.add("hidden");
+            }
+
+            if (hasTask2) {
+                task2Box.classList.remove("hidden");
+                document.getElementById("hub-task1-title").textContent = "حل المهمة الأولى";
+                document.getElementById("hub-task1-desc").textContent = "أجب عن أسئلة المرحلة الأولى لكشف المنفّذ وفتح رسالة شريك المحقق";
+
+                const solved1 = isTask1Completed(c.id || activeCaseIndex);
+                const statusPill = document.getElementById("hub-task2-status-pill");
+                if (solved1) {
+                    task2Box.classList.remove("locked-stage");
+                    statusPill.className = "stage-status-pill status-unlocked";
+                    statusPill.textContent = "🔓 المرحلة متاحة الآن";
+                } else {
+                    task2Box.classList.add("locked-stage");
+                    statusPill.className = "stage-status-pill status-locked";
+                    statusPill.textContent = "🔒 يُفتح تلقائياً بعد حل المهمة الأولى";
+                }
+            } else {
+                task2Box.classList.add("hidden");
+                document.getElementById("hub-task1-title").textContent = "حل المهمة النهائية والحسم القضائي";
+                document.getElementById("hub-task1-desc").textContent = "أجب عن أسئلة التحقيق لكشف الجاني وفتح التقرير الختامي وحكم المحكمة";
+            }
+
+            // ضبط توزيع المربعات (2 أو 3 أو 4 مربعات)
+            const visibleBoxes = [puzzlesBox, phoneBox, task1Box, task2Box].filter(b => !b.classList.contains("hidden"));
+            visibleBoxes.forEach(b => b.classList.remove("span-full-row"));
+            if (visibleBoxes.length === 3) {
+                optionsGrid.classList.add("three-items-layout");
+                visibleBoxes[2].classList.add("span-full-row");
+            } else {
                 optionsGrid.classList.remove("three-items-layout");
             }
 
@@ -865,7 +982,7 @@
                 card.innerHTML = `
                     <span class="card-badge">لغز رقم #${pIdx + 1}</span>
                     <h3>${escapeHtml(p.title)}</h3>
-                    <p>${escapeHtml(p.hint || "اضغط لعرض الحل الكامل")}</p>
+                    <p>💡 ${escapeHtml(p.hint || "اضغط لقراءة التلميح أو كشف الحل")}</p>
                 `;
                 container.appendChild(card);
             });
@@ -876,8 +993,13 @@
         function openSinglePuzzleSolution(pIdx) {
             hideAllViews();
             const p = casesData[activeCaseIndex].puzzles[pIdx];
-            document.getElementById("single-puzzle-badge").textContent = `حل اللغز #${pIdx + 1}`;
+            document.getElementById("single-puzzle-badge").textContent = `لغز رقم #${pIdx + 1}`;
             document.getElementById("single-puzzle-title").textContent = p.title;
+            document.getElementById("single-puzzle-hint-text").textContent = p.hint || "تمعّن في وثائق مسرح الجريمة وقاطع الأدلة للوصول إلى النتيجة.";
+
+            // إخفاء الحل الكامل مبدئياً لمنع الحرق بالخطأ
+            document.getElementById("puzzle-spoiler-guard").classList.remove("hidden");
+            document.getElementById("puzzle-full-solution-wrapper").classList.add("hidden");
 
             const solTextEl = document.getElementById("single-puzzle-solution");
             if (p.solution && p.solution.trim() !== "") {
@@ -900,10 +1022,15 @@
             document.getElementById("view-single-puzzle").classList.remove("hidden");
         }
 
+        function revealFullPuzzleSolution() {
+            document.getElementById("puzzle-spoiler-guard").classList.add("hidden");
+            document.getElementById("puzzle-full-solution-wrapper").classList.remove("hidden");
+        }
+
         function openVictimPhoneGate() {
             hideAllViews();
             const c = casesData[activeCaseIndex];
-            document.getElementById("phone-hint-label").textContent = c.phoneHint || "تلميح القفل: (يوم العرض) + (رقم القاعة) + (رقم المقعد) من اليسار إلى اليمين:";
+            document.getElementById("phone-hint-label").textContent = c.phoneHint || "تلميح القفل: (يوم العرض) + (شخصيات المشهد 5) + (علامة مقعدي):";
             document.getElementById("input-phone-code").value = "";
             document.getElementById("phone-code-error").classList.add("hidden");
             document.getElementById("phone-lock-screen").classList.remove("hidden");
@@ -991,8 +1118,9 @@
             } else {
                 msgScreen.classList.add("hidden");
                 noteScreen.classList.remove("hidden");
-                pillMsg.classList.remove("active");
+                pillMsg.classList.add("active");
                 pillNote.classList.add("active");
+                pillMsg.classList.remove("active");
                 appTitle.textContent = `📝 تطبيق الملاحظات (${activePhoneNotesList.length})`;
                 renderCurrentNoteSlide();
             }
@@ -1068,10 +1196,32 @@
         function openTask1View() {
             hideAllViews();
             const c = casesData[activeCaseIndex];
+            const hasTask2 = c.enableTask2 !== false;
+
+            document.getElementById("view-task1-header-title").textContent = hasTask2
+                ? "🕵️‍♂️ حل المهمة الأولى (المرحلة الأولى)"
+                : "🕵️‍♂️⚖️ حل المهمة النهائية والحسم القضائي";
+            document.getElementById("view-task1-header-sub").textContent = hasTask2
+                ? "أجب عن الأسئلة التالية للإيقاع بالجاني المنفّذ وفتح المظروف السري الثاني"
+                : "أجب عن الأسئلة التالية لكشف الحقيقة الكاملة وفتح قرار المحكمة النهائي";
+
             document.getElementById("task1-error-box").classList.add("hidden");
             document.getElementById("view-partner-msg").classList.add("hidden");
+            document.getElementById("view-task1-final-verdict").classList.add("hidden");
             renderPlayerQuestions(c.task1Questions, 't1', 'task1-questions-container');
             document.getElementById("view-task1").classList.remove("hidden");
+        }
+
+        function tryOpenTask2View() {
+            const c = casesData[activeCaseIndex];
+            if (!isTask1Completed(c.id || activeCaseIndex)) {
+                const notice = document.getElementById("hub-lock-notice");
+                notice.textContent = "🔒 لا يمكنك الدخول إلى المهمة الثانية قبل حل المهمة الأولى أولاً (لمنع حرق أحداث الظرف الأول عليك)!";
+                notice.classList.remove("hidden");
+                notice.scrollIntoView({ behavior: "smooth", block: "center" });
+                return;
+            }
+            openTask2View();
         }
 
         function openTask2View() {
@@ -1135,6 +1285,23 @@
             }
 
             onSuccessCallback(c);
+        }
+
+        function onTask1Solved(c) {
+            markTask1Completed(c.id || activeCaseIndex);
+
+            // إذا كانت القضية من مهمة واحدة فقط، نعرض التقرير الختامي وحكم المحكمة مباشرة
+            if (c.enableTask2 === false) {
+                const targetBox = document.getElementById("view-task1-final-verdict");
+                showFinalVerdictDocs(c);
+                const verdictHtml = document.getElementById("view-verdict-docs").innerHTML;
+                targetBox.innerHTML = verdictHtml;
+                targetBox.classList.remove("hidden");
+                targetBox.scrollIntoView({ behavior: "smooth" });
+                return;
+            }
+
+            showPartnerMessage(c);
         }
 
         function showPartnerMessage(c) {
