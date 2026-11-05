@@ -174,7 +174,7 @@
                 </div>
             </div>
 
-            <!-- التبويب 2: هاتف الضحية (اختياري: تفعيل/إلغاء + الرسائل + الملاحظات المتعددة) -->
+            <!-- التبويب 2: هاتف الضحية (اختياري) -->
             <div id="tab-phone" class="tab-pane hidden">
                 <div class="admin-item-box" style="background: #fffbeb; border: 2px solid var(--gold);">
                     <label style="display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1rem; color: var(--navy-dark); cursor: pointer;">
@@ -190,7 +190,7 @@
                         <input type="text" id="adm-phone-code" class="input-field" style="font-weight: 800; letter-spacing: 2px;">
 
                         <label class="label-title">تلميح قفل الهاتف (يظهر للاعب تحت شاشة القفل):</label>
-                        <input type="text" id="adm-phone-hint" class="input-field" placeholder="تلميح القفل: (يوم العرض) + (رقم القاعة) + (رقم المقعد) من اليسار إلى اليمين">
+                        <input type="text" id="adm-phone-hint" class="input-field" placeholder="تلميح القفل: (يوم العرض) + (شخصيات المشهد 5) + (علامة مقعدي):">
                     </div>
 
                     <div class="admin-item-box">
@@ -222,9 +222,12 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
                     <div>
                         <h4>🧩 قائمة الألغاز وحلولها في هذه القضية:</h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted);">يمكنك تعديل عنوان اللغز وتلميحه ونص الحل أو إرفاق صورة توضيحية بدقة عالية</p>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">يظهر للاعب "التلميح" أولاً، ولا يظهر "الحل الكامل" إلا إذا ضغط زر كشف الحل</p>
                     </div>
-                    <button class="btn btn-success" onclick="addPuzzle()">+ إضافة لغز جديد</button>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="btn btn-gold" onclick="applyUpgradedBloudanPuzzles()" title="تحديث الألغاز وتلميح الهاتف للنسخة الصعبة الجديدة مع الحفاظ على صورك">⚡ تحديث ألغاز (السم النائم) للنسخة الصعبة</button>
+                        <button class="btn btn-success" onclick="addPuzzle()">+ إضافة لغز جديد</button>
+                    </div>
                 </div>
                 <div id="adm-puzzles-container"></div>
             </div>
@@ -233,15 +236,15 @@
             <div id="tab-task1" class="tab-pane hidden">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
                     <div>
-                        <h4>🕵️‍♂️ أسئلة المهمة الأولى (المرحلة الأولى):</h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted);">إذا أجاب اللاعب عنها بشكل صحيح، تفتح له رسالة شريك المحقق</p>
+                        <h4>🕵️‍♂️ أسئلة المهمة الأولى:</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">إذا كانت القضية من مهمتين تفتح "رسالة الشريك"، وإذا كانت من مهمة واحدة تفتح "حكم المحكمة النهائي" مباشرة</p>
                     </div>
                     <button class="btn btn-success" onclick="addTaskQuestion('task1Questions')">+ إضافة سؤال للمهمة الأولى</button>
                 </div>
                 <div id="adm-task1-questions-container"></div>
 
                 <div class="admin-item-box" style="border-right: 5px solid var(--gold);">
-                    <h4 style="color: var(--navy-main); margin-bottom: 10px;">📩 رسالة شريك المحقق (تظهر بعد حل المهمة الأولى بنجاح)</h4>
+                    <h4 style="color: var(--navy-main); margin-bottom: 10px;">📩 رسالة شريك المحقق (تظهر بعد حل المهمة الأولى في القضايا ذات المهمتين)</h4>
                     <label class="label-title">النص الكامل لرسالة شريك المحقق:</label>
                     <textarea id="adm-partner-msg" class="input-field" rows="7"></textarea>
 
@@ -262,14 +265,23 @@
 
             <!-- التبويب 5: المهمة الثانية وحكم المحكمة -->
             <div id="tab-task2" class="tab-pane hidden">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
-                    <div>
-                        <h4>⚖️ أسئلة المهمة الثانية (الحسم النهائي):</h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted);">إذا أجاب اللاعب عنها بشكل صحيح، يفتح له الخط الزمني الكامل وقرار المحكمة النهائي</p>
-                    </div>
-                    <button class="btn btn-success" onclick="addTaskQuestion('task2Questions')">+ إضافة سؤال للمهمة الثانية</button>
+                <div class="admin-item-box" style="background: #fffbeb; border: 2px solid var(--gold);">
+                    <label style="display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1rem; color: var(--navy-dark); cursor: pointer;">
+                        <input type="checkbox" id="adm-task2-enabled" style="width: 22px; height: 22px; accent-color: var(--navy-main); cursor: pointer;" onchange="toggleTask2SectionVisibility()">
+                        <span>⚖️ تفعيل قسم "المهمة الثانية" في هذه القضية (أزل إشارة الصح إذا كانت القضية من مرحلة واحدة فقط)</span>
+                    </label>
                 </div>
-                <div id="adm-task2-questions-container"></div>
+
+                <div id="adm-task2-questions-wrapper">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <h4>⚖️ أسئلة المهمة الثانية (الحسم النهائي):</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">تكون مقفلة تلقائياً عند اللاعب حتى ينهي المهمة الأولى، وعند حلها تفتح حكم المحكمة</p>
+                        </div>
+                        <button class="btn btn-success" onclick="addTaskQuestion('task2Questions')">+ إضافة سؤال للمهمة الثانية</button>
+                    </div>
+                    <div id="adm-task2-questions-container"></div>
+                </div>
 
                 <div class="admin-item-box" style="border-right: 5px solid var(--navy-main);">
                     <h4 style="color: var(--navy-main); margin-bottom: 10px;">🕵️‍♂️ أولاً: الخط الزمني الكامل المحلول (تقرير بوارو الختامي)</h4>
@@ -487,6 +499,19 @@
             }
         }
 
+        function toggleTask2SectionVisibility() {
+            const enabled = document.getElementById("adm-task2-enabled").checked;
+            const wrapper = document.getElementById("adm-task2-questions-wrapper");
+            if (enabled) {
+                wrapper.classList.remove("hidden");
+            } else {
+                wrapper.classList.add("hidden");
+            }
+            if (casesData[selectedIdx]) {
+                casesData[selectedIdx].enableTask2 = enabled;
+            }
+        }
+
         function loadSelectedCase() {
             selectedIdx = parseInt(document.getElementById("admin-case-selector").value, 10) || 0;
             const c = casesData[selectedIdx];
@@ -504,12 +529,14 @@
             document.getElementById("adm-desc").value = c.desc || "";
             document.getElementById("adm-pass").value = c.casePassword || "511";
 
-            // خيار تفعيل الهاتف (مفعّل افتراضياً ما لم يتم إلغاؤه)
             document.getElementById("adm-phone-enabled").checked = (c.enablePhone !== false);
             togglePhoneSectionVisibility();
 
+            document.getElementById("adm-task2-enabled").checked = (c.enableTask2 !== false);
+            toggleTask2SectionVisibility();
+
             document.getElementById("adm-phone-code").value = c.phonePasscode || "250401";
-            document.getElementById("adm-phone-hint").value = c.phoneHint || "تلميح القفل: (يوم العرض) + (رقم القاعة) + (رقم المقعد) من اليسار إلى اليمين:";
+            document.getElementById("adm-phone-hint").value = c.phoneHint || "تلميح القفل: (يوم العرض) + (شخصيات المشهد 5) + (علامة مقعدي) من اليسار إلى اليمين:";
 
             document.getElementById("adm-partner-msg").value = c.partnerMessage || "";
             document.getElementById("adm-partner-img").value = c.partnerMessageImage || "";
@@ -528,6 +555,44 @@
             renderPuzzles();
             renderTaskQuestions('task1Questions', 'adm-task1-questions-container');
             renderTaskQuestions('task2Questions', 'adm-task2-questions-container');
+        }
+
+        function applyUpgradedBloudanPuzzles() {
+            const c = casesData[selectedIdx];
+            if (!c) return;
+            c.phoneHint = "تلميح القفل (6 خانات من اليسار لليمين): (يوم العرض الأول) + (عدد الدمى البشرية في المشهد 5) + (علامة مقعد الضحية):";
+            document.getElementById("adm-phone-hint").value = c.phoneHint;
+
+            c.puzzles = [
+                {
+                    title: "لغز رمز قفل هاتف الضحية (iPhone 15 Pro)",
+                    hint: "لا تبحث عن أرقام مباشرة! احسب تاريخ (الأربعاء الأخير من تشرين الثاني 2026) انطلاقاً من تاريخ الجريمة (الجمعة 20/11)، وعدّ الشخصيات التي يواجهها المخرج في ورقة المشهد الخامس، ثم انظر للعلامة الصفراء أمام كرسي الضحية.",
+                    solution: "بناءً على ملاحظة التذكير خلف هاتف جلال (6 خانات من اليسار إلى اليمين):\n1. يوم العرض الأول للمسرحية: البوستر يذكر أنه (الأربعاء الأخير من تشرين الثاني 2026)، وبما أن الجريمة وقعت يوم الجمعة 20/11 فإن الأربعاء التالي والأخير في الشهر يصادف يوم: (25).\n2. عدد الدمى البشرية في المشهد الخامس: بالعودة لورقة نص المشهد الخامس، يوجه المخرج خطابه لـ 4 شخصيات (الطبيب، الطباخ، المرأة الباكية، الكاتب الشاب) = (04).\n3. رقم علامة مقعد الضحية على رأس الطاولة: في صورة مسرح الجريمة يظهر الكرت الجنائي الأصفر أمام كرسي الضحية برقم: (01).\n\nالرمز الصحيح لفتح الهاتف هو: 250401",
+                    image: (c.puzzles[0] && c.puzzles[0].image) ? c.puzzles[0].image : ""
+                },
+                {
+                    title: "لغز معادلة السم الثنائي وفخاخ التضليل",
+                    hint: "تقرير المختبر (P.09) كشف درجة حموضة/قاعدية السائل المعبأ في بخاخ الحنجرة (pH). عوّض هذا الرقم في معادلة التفاعل الأول بورقة موسوعة السموم لتحسب زمن توقف القلب بالدقائق وتستبعد السموم الوهمية!",
+                    solution: "رغم وجود مغلف عشبة الجنكة (التي اشتراها مازن) ومسحوق الرودومول (الذي بحوزة بيسان) في الشاليه كفخاخ تضليل، فإن تقرير المختبر أثبت أن بخاخ حنجرة جلال عُبئ بمحلول قلوي تركيزه (pH = 11.4).\nبالتعويض في معادلة التفاعل الأول في موسوعة السموم:\nزمن توقف القلب T = (11.4 × 2) - 7.8 = 15 دقيقة!\nوهو ما يطابق تماماً شهادة الحاضرين بسقوط جلال الساعة 8:45 بعد 15 دقيقة من بدء تناول صلصة فاكهة النجمة الاستوائية الساعة 8:30 دون أي نزيف أو غيبوبة بطيئة.",
+                    image: (c.puzzles[1] && c.puzzles[1].image) ? c.puzzles[1].image : ""
+                },
+                {
+                    title: "لغز شيفرة الكتاب في المفكرة الجلدية السوداء",
+                    hint: "ضع ورقة (المشهد الخامس) المرقمة الأسطر بجانب صفحة المفكرة السوداء (P.31). كل قوس (سطر : كلمة : حرف) يدلك على حرف واحد من اسم الصديق الذي زوّر تقرير مشفى الطوارئ.",
+                    solution: "بمطابقة الثلاثيات الرقمية من اليمين إلى اليسار مع الأسطر المرقمة في ورقة (المشهد الخامس):\n- الكلمة الأولى: (4:3:1 = ط) (4:3:2 = ب) (4:3:3 = ي) (5:8:2 = ب) (4:3:3 = ي) -> طبيبي\n- الكلمة الثانية: (12:11:1 = ي) (8:2:3 = ز) (14:2:1 = ن) -> يزن\nالاسم المشفر للطبيب المناوب الذي زوّر تقرير دهس الصبي عام 2016 هو: (طبيبي - يزن) أي الدكتور يزن الدلباني.",
+                    image: (c.puzzles[2] && c.puzzles[2].image) ? c.puzzles[2].image : ""
+                },
+                {
+                    title: "لغز تقاطع البطاقات الذكية وأبراج الاتصالات (CDR)",
+                    hint: "قاطع نهاية أرقام لوحات السيارات في جدول الأقفال (P.28) مع استمارات المشتبه بهم، ثم قارن مواقع الأبراج الخلوية للرقم المجهول (0944-123-456) في الصفحة (P.33) مع عنوان السكن والعيادة وتوقيت فاتورة الصيدلية!",
+                    solution: "1. البطاقة الذكية (#101): سُلمت لصاحب الفان الأبيض (**4102) الشيف تيم الأيهمي (فتح باب المطبخ الخلفي 17:02 لاستلام الفاكهة، والساعة 20:32 لرمي زجاجة القطرات الأصلية).\n2. البطاقة الذكية (#102): سُلمت لصاحب الأودي الكحلي (**8921) د. يزن الدلباني (صعد للجناح العلوي الساعة 19:03 لمدة 360 ثانية لتبديل القطرات وسرقة وثيقة 2016، ثم دخل المطبخ الساعة 19:12).\n3. الخط السري (0944-123-456): يثبت جدول أبراج التغطية أنه يبيت في (المالكي - شارع الجلاء: عنوان سكن د. يزن)، وأجرى مكالمة مع تيم من (برج شارع الحمرا: عنوان عيادته) يوم 18/11 الساعة 10:35 بعد 15 دقيقة فقط من شرائه المحلول القلوي من صيدلية الميرللي الساعة 10:20 صباحاً!",
+                    image: (c.puzzles[3] && c.puzzles[3].image) ? c.puzzles[3].image : ""
+                }
+            ];
+
+            renderPuzzles();
+            syncFormToMemory(true);
+            showStatus("⚡ تم تحديث الألغاز الأربعة وتلميحاتها للنسخة الاحترافية الصعبة بنجاح!");
         }
 
         function switchTab(tabId, btn) {
@@ -683,10 +748,10 @@
                     <label class="label-title">عنوان اللغز:</label>
                     <input type="text" class="input-field" value="${escapeHtml(p.title)}" oninput="casesData[selectedIdx].puzzles[${pIdx}].title = this.value">
 
-                    <label class="label-title">تلميح مختصر يظهر على البطاقة:</label>
-                    <input type="text" class="input-field" value="${escapeHtml(p.hint || '')}" oninput="casesData[selectedIdx].puzzles[${pIdx}].hint = this.value">
+                    <label class="label-title">💡 التلميح الاسترشادي (يظهر للاعب أولاً بدون حرق الحل):</label>
+                    <textarea class="input-field" rows="2" oninput="casesData[selectedIdx].puzzles[${pIdx}].hint = this.value">${escapeHtml(p.hint || '')}</textarea>
 
-                    <label class="label-title">نص الحل الكامل:</label>
+                    <label class="label-title">👁️ نص الحل التفصيلي الكامل (مخفي حتى يضغط اللاعب زر كشف الحل):</label>
                     <textarea class="input-field" rows="4" oninput="casesData[selectedIdx].puzzles[${pIdx}].solution = this.value">${escapeHtml(p.solution || '')}</textarea>
 
                     <div class="image-upload-zone">
@@ -719,8 +784,8 @@
         function addPuzzle() {
             casesData[selectedIdx].puzzles.push({
                 title: "عنوان اللغز الجديد",
-                hint: "تلميح مختصر يظهر للاعب",
-                solution: "اكتب الحل التفصيلي هنا...",
+                hint: "تلميح استرشادي يظهر للاعب أولاً...",
+                solution: "اكتب الحل التفصيلي الكامل هنا...",
                 image: ""
             });
             renderPuzzles();
@@ -878,6 +943,8 @@
             c.casePassword = document.getElementById("adm-pass").value.trim() || "511";
 
             c.enablePhone = document.getElementById("adm-phone-enabled").checked;
+            c.enableTask2 = document.getElementById("adm-task2-enabled").checked;
+
             c.phonePasscode = document.getElementById("adm-phone-code").value.trim() || "250401";
             c.phoneHint = document.getElementById("adm-phone-hint").value.trim();
 
@@ -987,6 +1054,7 @@
                 desc: "",
                 casePassword: "511",
                 enablePhone: true,
+                enableTask2: true,
                 phonePasscode: "250401",
                 phoneHint: "تلميح القفل: أدخل الرمز المكون من 6 أرقام",
                 phoneMessages: [
@@ -996,7 +1064,7 @@
                     { title: "ملاحظة خاصة #1", text: "نص الملاحظة..." }
                 ],
                 puzzles: [
-                    { title: "اللغز الأول", hint: "اضغط لعرض الحل", solution: "تفاصيل الحل...", image: "" }
+                    { title: "اللغز الأول", hint: "تلميح استرشادي للحل...", solution: "تفاصيل الحل الكامل...", image: "" }
                 ],
                 task1Questions: [
                     { type: "mcq", question: "سؤال المهمة الأولى؟", options: ["الخيار 1", "الخيار 2"], correctIndex: 0 }
